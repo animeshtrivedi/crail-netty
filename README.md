@@ -20,8 +20,8 @@ crail-netty depends upon netty. You can build the project by:
 mvn -DskipTests install
 ```
 Then copy the jar file (`crail-netty-1.0.jar`) from the `target` folder 
-into `$CRAIL_HOME/jars/` along with the netty jar (`netty-all-4.0.29.Final.jar`) 
-(if not there). 
+into `$CRAIL_HOME/jars/` along with the netty jar (`netty-all-4.0.29.Final.jar`),
+if not there already. 
 
 Alternatively you can also put these files in your custom classpath 
 (if you have one) and export it.
@@ -36,16 +36,16 @@ crail.datanode.netty.interface       eth0
 crail.datanode.netty.port            19862
 ```
 
-You should put them in `$CRAIL_HOME/conf/crail-site.conf`. 
+You should put them in the `$CRAIL_HOME/conf/crail-site.conf` file.
 
 **Note:** Currently these values cannot be overidden by a command line 
 parameter. We will support this feature with the next release.
 
 ## Enabling data transfer on netty
-The instructions to start a crail datanode is mostly similar to crail
+Instructions to start a crail datanode is mostly similar to crail
 (https://github.com/zrlio/crail#deploying). Crail-netty implements a 
 specific type of crail datanode which does data transfers to a client 
-over netty. To run this crail-netty datanode
+over netty. To run this crail-netty datanode:
 ```bash 
 $CRAIL_HOME/bin/crail datanode -t com.ibm.crail.datanode.netty.NettyDataNode
 ```
