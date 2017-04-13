@@ -25,9 +25,9 @@ package com.ibm.crail.namenode.rpc.netty;
 import com.ibm.crail.datanode.netty.CrailNettyUtils;
 import com.ibm.crail.namenode.rpc.netty.client.NettyRPCNamenodeClientGroup;
 import com.ibm.crail.namenode.rpc.netty.common.*;
-import com.ibm.crail.namenode.rpc.RpcNameNode;
-import com.ibm.crail.namenode.rpc.RpcNameNodeClient;
-import com.ibm.crail.namenode.rpc.RpcNameNodeService;
+import com.ibm.crail.rpc.RpcBinding;
+import com.ibm.crail.rpc.RpcConnection;
+import com.ibm.crail.rpc.RpcNameNodeService;
 import com.ibm.crail.utils.CrailUtils;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
 
-public class NettyNameNode implements RpcNameNode  {
+public class NettyNameNode implements RpcBinding {
     static private Logger LOG = CrailNettyUtils.getLogger();
     private NettyRPCNamenodeClientGroup clientGroup;
 
@@ -48,14 +48,7 @@ public class NettyNameNode implements RpcNameNode  {
         clientGroup = null;
     }
 
-    public RpcNameNodeClient getRpcClient(InetSocketAddress address)  throws Exception{
-        if(clientGroup == null) {
-            /* this should be the client side code */
-            clientGroup = new NettyRPCNamenodeClientGroup();
-        }
-        return clientGroup.getClient(address);
-    }
-
+    /* This is inherited from the RPCBinding - the passed service object is where the RPCs are processed. */
     public void run(final RpcNameNodeService service){
         /* here we run the incoming RPC service */
         InetSocketAddress inetSocketAddress = CrailUtils.getNameNodeAddress();
@@ -98,6 +91,16 @@ public class NettyNameNode implements RpcNameNode  {
         }
     }
 
+    /* This function comes from RPCClient interface */
+    public RpcConnection connect(InetSocketAddress address) {
+        if(clientGroup == null) {
+            /* this should be the client side code */
+            clientGroup = new NettyRPCNamenodeClientGroup();
+        }
+        return clientGroup.getClient(address);
+    }
+
+    /* This function comes from RPCClient interface */
     public void close(){
         if(this.clientGroup != null) {
             /* after this close rest of the infrastructure */

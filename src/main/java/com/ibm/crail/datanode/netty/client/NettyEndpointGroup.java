@@ -22,10 +22,10 @@
 
 package com.ibm.crail.datanode.netty.client;
 
-import com.ibm.crail.datanode.DataNodeEndpoint;
 import com.ibm.crail.datanode.netty.CrailNettyUtils;
 import com.ibm.crail.datanode.netty.rpc.RdmaDecoderRx;
 
+import com.ibm.crail.storage.StorageEndpoint;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -84,7 +84,7 @@ public class NettyEndpointGroup {
         return  inFlightOps.remove(slot);
     }
 
-    public DataNodeEndpoint createEndpoint(final InetSocketAddress inetSocketAddress) throws IOException {
+    public StorageEndpoint createEndpoint(final InetSocketAddress inetSocketAddress) throws IOException {
         NettyEndpoint ep = null;
         try {
             /* here we got the client channel and we trigger write on it */

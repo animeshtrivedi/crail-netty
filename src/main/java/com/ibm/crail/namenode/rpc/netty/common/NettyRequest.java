@@ -22,16 +22,18 @@
 
 package com.ibm.crail.namenode.rpc.netty.common;
 
-import com.ibm.crail.namenode.rpc.NameNodeProtocol;
-import com.ibm.crail.namenode.rpc.RpcRequestMessage;
-
+import com.ibm.crail.rpc.RpcProtocol;
+import com.ibm.crail.rpc.RpcRequestMessage;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class NettyRequest {
-    public static final int CSIZE = 12 + Math.max(RpcRequestMessage.SetFileReq.CSIZE, RpcRequestMessage.RenameFileReq.CSIZE);
+    /* these three variables are cmd + error + cookie */
+    public static final int headerSize = Short.BYTES + Short.BYTES + Long.BYTES;
+    public static final int CSIZE = headerSize +
+            Math.max(RpcRequestMessage.SetFileReq.CSIZE, RpcRequestMessage.RenameFileReq.CSIZE);
 
     private short cmd;
     private short type;
@@ -56,7 +58,7 @@ public class NettyRequest {
         this.type = 0;
         this.cookie = 0;
         /* -12 because cmd, type, cookie are not put through the byte buffer */
-        this.nioBuffer = ByteBuffer.allocateDirect(NettyRequest.CSIZE - 12);
+        this.nioBuffer = ByteBuffer.allocateDirect(NettyRequest.CSIZE - headerSize);
     }
 
     public NettyRequest(RpcRequestMessage.CreateFileReq message, long cookie) {
@@ -64,7 +66,7 @@ public class NettyRequest {
         this.cookie = cookie;
         this.type = message.getType();
         this.createFileReq = message;
-        this.cmd = NameNodeProtocol.CMD_CREATE_FILE;
+        this.cmd = RpcProtocol.CMD_CREATE_FILE;
     }
 
     public NettyRequest(RpcRequestMessage.GetFileReq message, long cookie) {
@@ -72,7 +74,7 @@ public class NettyRequest {
         this.cookie = cookie;
         this.type = message.getType();
         this.fileReq = message;
-        this.cmd = NameNodeProtocol.CMD_GET_FILE;
+        this.cmd = RpcProtocol.CMD_GET_FILE;
     }
 
     public NettyRequest(RpcRequestMessage.SetFileReq message, long cookie) {
@@ -80,7 +82,7 @@ public class NettyRequest {
         this.cookie = cookie;
         this.type = message.getType();
         this.setFileReq = message;
-        this.cmd = NameNodeProtocol.CMD_SET_FILE;
+        this.cmd = RpcProtocol.CMD_SET_FILE;
     }
 
     public NettyRequest(RpcRequestMessage.RemoveFileReq message, long cookie) {
@@ -88,7 +90,7 @@ public class NettyRequest {
         this.cookie = cookie;
         this.type = message.getType();
         this.removeReq = message;
-        this.cmd = NameNodeProtocol.CMD_REMOVE_FILE;
+        this.cmd = RpcProtocol.CMD_REMOVE_FILE;
     }
 
     public NettyRequest(RpcRequestMessage.RenameFileReq message, long cookie) {
@@ -96,7 +98,7 @@ public class NettyRequest {
         this.cookie = cookie;
         this.type = message.getType();
         this.renameFileReq = message;
-        this.cmd = NameNodeProtocol.CMD_RENAME_FILE;
+        this.cmd = RpcProtocol.CMD_RENAME_FILE;
     }
 
     public NettyRequest(RpcRequestMessage.GetBlockReq message, long cookie) {
@@ -104,7 +106,7 @@ public class NettyRequest {
         this.cookie = cookie;
         this.type = message.getType();
         this.getBlockReq = message;
-        this.cmd = NameNodeProtocol.CMD_GET_BLOCK;
+        this.cmd = RpcProtocol.CMD_GET_BLOCK;
     }
 
     public NettyRequest(RpcRequestMessage.GetLocationReq message, long cookie) {
@@ -112,7 +114,7 @@ public class NettyRequest {
         this.cookie = cookie;
         this.type = message.getType();
         this.getLocationReq = message;
-        this.cmd = NameNodeProtocol.CMD_GET_LOCATION;
+        this.cmd = RpcProtocol.CMD_GET_LOCATION;
     }
 
     public NettyRequest(RpcRequestMessage.SetBlockReq message, long cookie) {
@@ -120,7 +122,7 @@ public class NettyRequest {
         this.cookie = cookie;
         this.type = message.getType();
         this.setBlockReq = message;
-        this.cmd = NameNodeProtocol.CMD_SET_BLOCK;
+        this.cmd = RpcProtocol.CMD_SET_BLOCK;
     }
 
     public NettyRequest(RpcRequestMessage.GetDataNodeReq message, long cookie) {
@@ -128,7 +130,7 @@ public class NettyRequest {
         this.cookie = cookie;
         this.type = message.getType();
         this.getDataNodeReq = message;
-        this.cmd = NameNodeProtocol.CMD_GET_DATANODE;
+        this.cmd = RpcProtocol.CMD_GET_DATANODE;
     }
 
     public NettyRequest(RpcRequestMessage.DumpNameNodeReq message, long cookie) {
@@ -136,7 +138,7 @@ public class NettyRequest {
         this.cookie = cookie;
         this.type = message.getType();
         this.dumpNameNodeReq = message;
-        this.cmd = NameNodeProtocol.CMD_DUMP_NAMENODE;
+        this.cmd = RpcProtocol.CMD_DUMP_NAMENODE;
     }
 
     public NettyRequest(RpcRequestMessage.PingNameNodeReq message, long cookie) {
@@ -144,7 +146,7 @@ public class NettyRequest {
         this.cookie = cookie;
         this.type = message.getType();
         this.pingNameNodeReq = message;
-        this.cmd = NameNodeProtocol.CMD_PING_NAMENODE;
+        this.cmd = RpcProtocol.CMD_PING_NAMENODE;
     }
 
     public long getCookie(){
@@ -152,44 +154,44 @@ public class NettyRequest {
     }
 
     public int write(ByteBuf buffer) throws IOException {
-        buffer.writeLong(cookie); //8
-        buffer.writeShort(cmd); //2
-        buffer.writeShort(type); //2
-        int written = 12;
+        buffer.writeLong(cookie); //8 bytes
+        buffer.writeShort(cmd); //2 bytes
+        buffer.writeShort(type); //2 bytes
+        int written = headerSize;
 
         nioBuffer.clear();
         switch (type) {
-            case NameNodeProtocol.REQ_CREATE_FILE:
+            case RpcProtocol.REQ_CREATE_FILE:
                 written += createFileReq.write(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_GET_FILE:
+            case RpcProtocol.REQ_GET_FILE:
                 written += fileReq.write(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_SET_FILE:
+            case RpcProtocol.REQ_SET_FILE:
                 written += setFileReq.write(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_REMOVE_FILE:
+            case RpcProtocol.REQ_REMOVE_FILE:
                 written += removeReq.write(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_RENAME_FILE:
+            case RpcProtocol.REQ_RENAME_FILE:
                 written += renameFileReq.write(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_GET_BLOCK:
+            case RpcProtocol.REQ_GET_BLOCK:
                 written += getBlockReq.write(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_GET_LOCATION:
+            case RpcProtocol.REQ_GET_LOCATION:
                 written += getLocationReq.write(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_SET_BLOCK:
+            case RpcProtocol.REQ_SET_BLOCK:
                 written += setBlockReq.write(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_GET_DATANODE:
+            case RpcProtocol.REQ_GET_DATANODE:
                 written += getDataNodeReq.write(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_DUMP_NAMENODE:
+            case RpcProtocol.REQ_DUMP_NAMENODE:
                 written += dumpNameNodeReq.write(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_PING_NAMENODE:
+            case RpcProtocol.REQ_PING_NAMENODE:
                 written += pingNameNodeReq.write(nioBuffer);
                 break;
         }
@@ -210,47 +212,47 @@ public class NettyRequest {
         nioBuffer.flip();
 
         switch (type) {
-            case NameNodeProtocol.REQ_CREATE_FILE:
+            case RpcProtocol.REQ_CREATE_FILE:
                 this.createFileReq = new RpcRequestMessage.CreateFileReq();
                 createFileReq.update(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_GET_FILE:
+            case RpcProtocol.REQ_GET_FILE:
                 this.fileReq = new RpcRequestMessage.GetFileReq();
                 fileReq.update(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_SET_FILE:
+            case RpcProtocol.REQ_SET_FILE:
                 this.setFileReq = new RpcRequestMessage.SetFileReq();
                 setFileReq.update(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_REMOVE_FILE:
+            case RpcProtocol.REQ_REMOVE_FILE:
                 this.removeReq = new RpcRequestMessage.RemoveFileReq();
                 removeReq.update(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_RENAME_FILE:
+            case RpcProtocol.REQ_RENAME_FILE:
                 this.renameFileReq = new RpcRequestMessage.RenameFileReq();
                 renameFileReq.update(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_GET_BLOCK:
+            case RpcProtocol.REQ_GET_BLOCK:
                 this.getBlockReq = new RpcRequestMessage.GetBlockReq();
                 getBlockReq.update(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_GET_LOCATION:
+            case RpcProtocol.REQ_GET_LOCATION:
                 this.getLocationReq = new RpcRequestMessage.GetLocationReq();
                 getLocationReq.update(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_SET_BLOCK:
+            case RpcProtocol.REQ_SET_BLOCK:
                 this.setBlockReq = new RpcRequestMessage.SetBlockReq();
                 setBlockReq.update(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_GET_DATANODE:
+            case RpcProtocol.REQ_GET_DATANODE:
                 this.getDataNodeReq = new RpcRequestMessage.GetDataNodeReq();
                 getDataNodeReq.update(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_DUMP_NAMENODE:
+            case RpcProtocol.REQ_DUMP_NAMENODE:
                 this.dumpNameNodeReq = new RpcRequestMessage.DumpNameNodeReq();
                 dumpNameNodeReq.update(nioBuffer);
                 break;
-            case NameNodeProtocol.REQ_PING_NAMENODE:
+            case RpcProtocol.REQ_PING_NAMENODE:
                 this.pingNameNodeReq = new RpcRequestMessage.PingNameNodeReq();
                 pingNameNodeReq.update(nioBuffer);
                 break;

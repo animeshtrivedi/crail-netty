@@ -22,9 +22,9 @@
 
 package com.ibm.crail.datanode.netty.client;
 
-import com.ibm.crail.datanode.DataResult;
 import com.ibm.crail.datanode.netty.rpc.MessageTypes;
 import com.ibm.crail.datanode.netty.rpc.RdmaMsgRx;
+import com.ibm.crail.storage.DataResult;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;

@@ -22,12 +22,12 @@
 
 package com.ibm.crail.datanode.netty.client;
 
-import com.ibm.crail.datanode.DataNodeEndpoint;
-import com.ibm.crail.datanode.DataResult;
 import com.ibm.crail.datanode.netty.rpc.MessageTypes;
 import com.ibm.crail.datanode.netty.rpc.RdmaMsgTx;
-import com.ibm.crail.namenode.protocol.BlockInfo;
+import com.ibm.crail.metadata.BlockInfo;
 
+import com.ibm.crail.storage.DataResult;
+import com.ibm.crail.storage.StorageEndpoint;
 import io.netty.channel.*;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Future;
 
-public class NettyEndpoint implements DataNodeEndpoint {
+public class NettyEndpoint implements StorageEndpoint {
     private Channel noAtomicClientChannel;
     private NettyEndpointGroup group;
 

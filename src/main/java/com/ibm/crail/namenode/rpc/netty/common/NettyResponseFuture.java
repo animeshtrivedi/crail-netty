@@ -22,13 +22,13 @@
 
 package com.ibm.crail.namenode.rpc.netty.common;
 
-import com.ibm.crail.namenode.rpc.RpcNameNodeFuture;
+import com.ibm.crail.rpc.RpcFuture;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class NettyResponseFuture<T> extends NettyCommonFuture implements RpcNameNodeFuture<T> {
+public class NettyResponseFuture<T> extends NettyCommonFuture implements RpcFuture<T> {
     private T result;
     private String debug;
     private boolean prefetch;

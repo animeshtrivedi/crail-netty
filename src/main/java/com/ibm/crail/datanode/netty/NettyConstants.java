@@ -36,7 +36,7 @@ public class NettyConstants {
 
     public static final String DATANODE_NETTY_INTERFACE_KEY = "crail.datanode.netty.interface";
     public static InetSocketAddress DATANODE_NETTY_INTERFACE = null;
-    public static String _ifname = "eth0";
+    public static String _ifname = "lo";
 
     public static final String DATANODE_NETTY_PORT_KEY = "crail.datanode.netty.port";
     public static int DATANODE_NETTY_PORT = 19862;

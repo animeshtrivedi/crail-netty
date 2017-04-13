@@ -23,11 +23,11 @@
 package com.ibm.crail.namenode.rpc.netty;
 
 import com.ibm.crail.datanode.netty.CrailNettyUtils;
-import com.ibm.crail.namenode.rpc.NameNodeProtocol;
-import com.ibm.crail.namenode.rpc.RpcNameNodeService;
 import com.ibm.crail.namenode.rpc.netty.common.NettyRequest;
 import com.ibm.crail.namenode.rpc.netty.common.NettyResponse;
 
+import com.ibm.crail.rpc.RpcNameNodeService;
+import com.ibm.crail.rpc.RpcProtocol;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -46,48 +46,48 @@ public class NamenodeProcessor extends SimpleChannelInboundHandler<NettyRequest>
         NettyResponse response = new NettyResponse();
         short error;
         try {
-            response.setTypeAndAllocate(NameNodeProtocol.responseTypes[request.getCmd()], request.getCookie());
+            response.setTypeAndAllocate(RpcProtocol.responseTypes[request.getCmd()], request.getCookie());
             switch(request.getCmd()) {
-                case NameNodeProtocol.CMD_CREATE_FILE:
+                case RpcProtocol.CMD_CREATE_FILE:
                     error = service.createFile(request.createFile(), response.createFile(), response);
                     break;
-                case NameNodeProtocol.CMD_GET_FILE:
+                case RpcProtocol.CMD_GET_FILE:
                     error = service.getFile(request.getFile(), response.getFile(), response);
                     break;
-                case NameNodeProtocol.CMD_SET_FILE:
+                case RpcProtocol.CMD_SET_FILE:
                     error = service.setFile(request.setFile(), response.getVoid(), response);
                     break;
-                case NameNodeProtocol.CMD_REMOVE_FILE:
+                case RpcProtocol.CMD_REMOVE_FILE:
                     error = service.removeFile(request.removeFile(), response.delFile(), response);
                     break;
-                case NameNodeProtocol.CMD_RENAME_FILE:
+                case RpcProtocol.CMD_RENAME_FILE:
                     error = service.renameFile(request.renameFile(), response.getRename(), response);
                     break;
-                case NameNodeProtocol.CMD_GET_BLOCK:
+                case RpcProtocol.CMD_GET_BLOCK:
                     error = service.getBlock(request.getBlock(), response.getBlock(), response);
                     break;
-                case NameNodeProtocol.CMD_GET_LOCATION:
+                case RpcProtocol.CMD_GET_LOCATION:
                     error = service.getLocation(request.getLocation(), response.getLocation(), response);
                     break;
-                case NameNodeProtocol.CMD_SET_BLOCK:
+                case RpcProtocol.CMD_SET_BLOCK:
                     error = service.setBlock(request.setBlock(), response.getVoid(), response);
                     break;
-                case NameNodeProtocol.CMD_GET_DATANODE:
+                case RpcProtocol.CMD_GET_DATANODE:
                     error = service.getDataNode(request.getDataNode(), response.getDataNode(), response);
                     break;
-                case NameNodeProtocol.CMD_DUMP_NAMENODE:
+                case RpcProtocol.CMD_DUMP_NAMENODE:
                     error = service.dump(request.dumpNameNode(), response.getVoid(), response);
                     break;
-                case NameNodeProtocol.CMD_PING_NAMENODE:
+                case RpcProtocol.CMD_PING_NAMENODE:
                     error = service.ping(request.pingNameNode(), response.pingNameNode(), response);
                     break;
                 default:
-                    error = NameNodeProtocol.ERR_INVALID_RPC_CMD;
+                    error = RpcProtocol.ERR_INVALID_RPC_CMD;
                     LOG.info("Rpc command not valid, opcode " + request.getCmd());
             }
         } catch(Exception e){
-            error = NameNodeProtocol.ERR_UNKNOWN;
-            LOG.info(NameNodeProtocol.messages[NameNodeProtocol.ERR_UNKNOWN] + e.getMessage());
+            error = RpcProtocol.ERR_UNKNOWN;
+            LOG.info(RpcProtocol.messages[RpcProtocol.ERR_UNKNOWN] + e.getMessage());
             e.printStackTrace();
         }
 

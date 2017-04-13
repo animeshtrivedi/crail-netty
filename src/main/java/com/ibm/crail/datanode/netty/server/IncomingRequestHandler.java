@@ -22,7 +22,7 @@
 
 package com.ibm.crail.datanode.netty.server;
 
-import com.ibm.crail.datanode.netty.NettyDataNode;
+import com.ibm.crail.datanode.netty.NettyStorageTier;
 import com.ibm.crail.datanode.netty.CrailNettyUtils;
 import com.ibm.crail.datanode.netty.rpc.MessageTypes;
 import com.ibm.crail.datanode.netty.rpc.RdmaMsgRx;
@@ -37,11 +37,11 @@ import org.slf4j.Logger;
 import sun.nio.ch.DirectBuffer;
 
 public class IncomingRequestHandler extends SimpleChannelInboundHandler<RdmaMsgRx> {
-    private NettyDataNode dataNode;
+    private NettyStorageServer dataNode;
     final Channel channel;
     static private final Logger LOG = CrailNettyUtils.getLogger();
 
-    public IncomingRequestHandler(Channel channel, NettyDataNode dataNode){
+    public IncomingRequestHandler(Channel channel, NettyStorageServer dataNode){
         this.dataNode = dataNode;
         this.channel = channel;
     }

@@ -22,16 +22,19 @@
 
 package com.ibm.crail.namenode.rpc.netty.common;
 
-import com.ibm.crail.namenode.rpc.NameNodeProtocol;
-import com.ibm.crail.namenode.rpc.RpcNameNodeState;
-import com.ibm.crail.namenode.rpc.RpcResponseMessage;
 
+import com.ibm.crail.rpc.RpcNameNodeState;
+import com.ibm.crail.rpc.RpcProtocol;
+import com.ibm.crail.rpc.RpcResponseMessage;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.ByteBuffer;
 
 public class NettyResponse implements RpcNameNodeState {
-    public static final int CSIZE = 12 + Math.max(RpcResponseMessage.GetBlockRes.CSIZE, RpcResponseMessage.RenameRes.CSIZE);
+    /* these three variables are type + error + cookie */
+    public static final int headerSize = Short.BYTES + Short.BYTES + Long.BYTES;
+    public static final int CSIZE = headerSize +
+            Math.max(RpcResponseMessage.GetBlockRes.CSIZE, RpcResponseMessage.RenameRes.CSIZE);
 
     private short type;
     private short error;
@@ -56,7 +59,7 @@ public class NettyResponse implements RpcNameNodeState {
         this.type = 0;
         this.error = 0;
         this.cookie = 0;
-        this.nioBuffer = ByteBuffer.allocateDirect(NettyResponse.CSIZE - 12);
+        this.nioBuffer = ByteBuffer.allocateDirect(NettyResponse.CSIZE - headerSize);
     }
 
     private NettyResponse(short type, long cookie, NettyCommonFuture resp) {
@@ -115,31 +118,31 @@ public class NettyResponse implements RpcNameNodeState {
         this.type = type;
         this.cookie = cookie;
         switch(type){
-            case NameNodeProtocol.RES_VOID:
+            case RpcProtocol.RES_VOID:
                 this.voidRes = new RpcResponseMessage.VoidRes();
                 break;
-            case NameNodeProtocol.RES_CREATE_FILE:
+            case RpcProtocol.RES_CREATE_FILE:
                 this.createFileRes = new RpcResponseMessage.CreateFileRes();
                 break;
-            case NameNodeProtocol.RES_GET_FILE:
+            case RpcProtocol.RES_GET_FILE:
                 this.getFileRes = new RpcResponseMessage.GetFileRes();
                 break;
-            case NameNodeProtocol.RES_DELETE_FILE:
+            case RpcProtocol.RES_DELETE_FILE:
                 this.delFileRes = new RpcResponseMessage.DeleteFileRes();
                 break;
-            case NameNodeProtocol.RES_RENAME_FILE:
+            case RpcProtocol.RES_RENAME_FILE:
                 this.renameRes = new RpcResponseMessage.RenameRes();
                 break;
-            case NameNodeProtocol.RES_GET_BLOCK:
+            case RpcProtocol.RES_GET_BLOCK:
                 this.getBlockRes = new RpcResponseMessage.GetBlockRes();
                 break;
-            case NameNodeProtocol.RES_GET_LOCATION:
+            case RpcProtocol.RES_GET_LOCATION:
                 this.getLocationRes = new RpcResponseMessage.GetLocationRes();
                 break;
-            case NameNodeProtocol.RES_GET_DATANODE:
+            case RpcProtocol.RES_GET_DATANODE:
                 this.getDataNodeRes = new RpcResponseMessage.GetDataNodeRes();
                 break;
-            case NameNodeProtocol.RES_PING_NAMENODE:
+            case RpcProtocol.RES_PING_NAMENODE:
                 this.pingNameNodeRes = new RpcResponseMessage.PingNameNodeRes();
                 break;
         }
@@ -157,34 +160,34 @@ public class NettyResponse implements RpcNameNodeState {
         buffer.writeShort(type);
         buffer.writeShort(error);
 
-        int written = 12;
+        int written = headerSize;
         nioBuffer.clear();
         switch(type){
-            case NameNodeProtocol.RES_VOID:
+            case RpcProtocol.RES_VOID:
                 written += voidRes.write(nioBuffer);
                 break;
-            case NameNodeProtocol.RES_CREATE_FILE:
+            case RpcProtocol.RES_CREATE_FILE:
                 written += createFileRes.write(nioBuffer);
                 break;
-            case NameNodeProtocol.RES_GET_FILE:
+            case RpcProtocol.RES_GET_FILE:
                 written += getFileRes.write(nioBuffer);
                 break;
-            case NameNodeProtocol.RES_DELETE_FILE:
+            case RpcProtocol.RES_DELETE_FILE:
                 written += delFileRes.write(nioBuffer);
                 break;
-            case NameNodeProtocol.RES_RENAME_FILE:
+            case RpcProtocol.RES_RENAME_FILE:
                 written += renameRes.write(nioBuffer);
                 break;
-            case NameNodeProtocol.RES_GET_BLOCK:
+            case RpcProtocol.RES_GET_BLOCK:
                 written += getBlockRes.write(nioBuffer);
                 break;
-            case NameNodeProtocol.RES_GET_LOCATION:
+            case RpcProtocol.RES_GET_LOCATION:
                 written += getLocationRes.write(nioBuffer);
                 break;
-            case NameNodeProtocol.RES_GET_DATANODE:
+            case RpcProtocol.RES_GET_DATANODE:
                 written += getDataNodeRes.write(nioBuffer);
                 break;
-            case NameNodeProtocol.RES_PING_NAMENODE:
+            case RpcProtocol.RES_PING_NAMENODE:
                 written += pingNameNodeRes.write(nioBuffer);
                 break;
         }
@@ -203,47 +206,47 @@ public class NettyResponse implements RpcNameNodeState {
         buffer.readBytes(nioBuffer);
         nioBuffer.flip();
         switch(type){
-            case NameNodeProtocol.RES_VOID:
+            case RpcProtocol.RES_VOID:
                 //this.voidRes = new RpcResponseMessage.VoidRes();
                 voidRes.update(nioBuffer);
                 voidRes.setError(error);
                 break;
-            case NameNodeProtocol.RES_CREATE_FILE:
+            case RpcProtocol.RES_CREATE_FILE:
                 //this.createFileRes = new RpcResponseMessage.CreateFileRes();
                 createFileRes.update(nioBuffer);
                 createFileRes.setError(error);
                 break;
-            case NameNodeProtocol.RES_GET_FILE:
+            case RpcProtocol.RES_GET_FILE:
                 //this.getFileRes = new RpcResponseMessage.GetFileRes();
                 getFileRes.update(nioBuffer);
                 getFileRes.setError(error);
                 break;
-            case NameNodeProtocol.RES_DELETE_FILE:
+            case RpcProtocol.RES_DELETE_FILE:
                 //this.delFileRes = new RpcResponseMessage.DeleteFileRes();
                 delFileRes.update(nioBuffer);
                 delFileRes.setError(error);
                 break;
-            case NameNodeProtocol.RES_RENAME_FILE:
+            case RpcProtocol.RES_RENAME_FILE:
                 //this.renameRes = new RpcResponseMessage.RenameRes();
                 renameRes.update(nioBuffer);
                 renameRes.setError(error);
                 break;
-            case NameNodeProtocol.RES_GET_BLOCK:
+            case RpcProtocol.RES_GET_BLOCK:
                 //this.getBlockRes = new RpcResponseMessage.GetBlockRes();
                 getBlockRes.update(nioBuffer);
                 getBlockRes.setError(error);
                 break;
-            case NameNodeProtocol.RES_GET_LOCATION:
+            case RpcProtocol.RES_GET_LOCATION:
                 //this.getLocationRes = new RpcResponseMessage.GetLocationRes();
                 getLocationRes.update(nioBuffer);
                 getLocationRes.setError(error);
                 break;
-            case NameNodeProtocol.RES_GET_DATANODE:
+            case RpcProtocol.RES_GET_DATANODE:
                 //this.getDataNodeRes = new RpcResponseMessage.GetDataNodeRes();
                 getDataNodeRes.update(nioBuffer);
                 getDataNodeRes.setError(error);
                 break;
-            case NameNodeProtocol.RES_PING_NAMENODE:
+            case RpcProtocol.RES_PING_NAMENODE:
                 //this.pingNameNodeRes = new RpcResponseMessage.PingNameNodeRes();
                 pingNameNodeRes.update(nioBuffer);
                 pingNameNodeRes.setError(error);
