@@ -20,7 +20,7 @@
  *
  */
 
-package com.ibm.crail.datanode.netty.rpc;
+package com.ibm.crail.storage.netty.rpc;
 
 import io.netty.buffer.ByteBuf;
 

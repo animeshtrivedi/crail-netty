@@ -22,7 +22,7 @@
 
 package com.ibm.crail.namenode.rpc.netty;
 
-import com.ibm.crail.datanode.netty.CrailNettyUtils;
+import com.ibm.crail.storage.netty.CrailNettyUtils;
 import com.ibm.crail.namenode.rpc.netty.client.NettyRPCNamenodeClientGroup;
 import com.ibm.crail.namenode.rpc.netty.common.*;
 import com.ibm.crail.rpc.RpcBinding;

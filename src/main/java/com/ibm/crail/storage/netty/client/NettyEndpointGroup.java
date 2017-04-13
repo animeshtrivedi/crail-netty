@@ -20,10 +20,10 @@
  *
  */
 
-package com.ibm.crail.datanode.netty.client;
+package com.ibm.crail.storage.netty.client;
 
-import com.ibm.crail.datanode.netty.CrailNettyUtils;
-import com.ibm.crail.datanode.netty.rpc.RdmaDecoderRx;
+import com.ibm.crail.storage.netty.CrailNettyUtils;
+import com.ibm.crail.storage.netty.rpc.RdmaDecoderRx;
 
 import com.ibm.crail.storage.StorageEndpoint;
 import io.netty.bootstrap.Bootstrap;
@@ -91,7 +91,7 @@ public class NettyEndpointGroup {
             Channel clientChannel = boot.connect(inetSocketAddress.getAddress(),
                     inetSocketAddress.getPort()).addListener(new GenericFutureListener<Future<? super Void>>() {
                 public void operationComplete(Future<? super Void> future) throws Exception {
-                    LOG.info("A client->datanode connection established to : " + inetSocketAddress);
+                    LOG.info("A client -> storagenode connection established to : " + inetSocketAddress);
                 }
             }).sync().channel();
             ep = new NettyEndpoint(this, clientChannel);

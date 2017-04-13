@@ -20,11 +20,11 @@
  *
  */
 
-package com.ibm.crail.datanode.netty;
+package com.ibm.crail.storage.netty;
 
 import com.ibm.crail.conf.CrailConfiguration;
-import com.ibm.crail.datanode.netty.client.NettyEndpointGroup;
-import com.ibm.crail.datanode.netty.server.NettyStorageServer;
+import com.ibm.crail.storage.netty.client.NettyEndpointGroup;
+import com.ibm.crail.storage.netty.server.NettyStorageServer;
 
 import com.ibm.crail.storage.StorageEndpoint;
 import com.ibm.crail.storage.StorageServer;
@@ -80,8 +80,8 @@ public class NettyStorageTier extends StorageTier {
     }
 
     public void printConf(Logger logger) {
-        logger.info(NettyConstants.DATANODE_NETTY_STORAGE_LIMIT_KEY + " " + NettyConstants.DATANODE_NETTY_STORAGE_LIMIT);
-        logger.info(NettyConstants.DATANODE_NETTY_ALLOCATION_SIZE_KEY + " " + NettyConstants.DATANODE_NETTY_ALLOCATION_SIZE);
-        logger.info(NettyConstants.DATANODE_NETTY_INTERFACE_KEY + " " + NettyConstants.DATANODE_NETTY_INTERFACE);
+        logger.info(NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT_KEY + " " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT);
+        logger.info(NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE_KEY + " " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
+        logger.info(NettyConstants.STORAGENODE_NETTY_INTERFACE_KEY + " " + NettyConstants.STORAGENODE_NETTY_INTERFACE);
     }
 }

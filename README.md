@@ -6,8 +6,8 @@ can be enabled separately.
 
 Crail RPCs, which happen between a client and the namenode, are defined in `com.ibm.crail.rpc.RpcBinding` interface.
 This interface is implemented by `com.ibm.crail.namenode.rpc.netty.NettyNameNode` class. The data transfer part, 
-which happens between a datanode and a client, is defined in `com.ibm.crail.storage` package and implemented by 
-`com.ibm.crail.datanode.netty.NettyStorageTier`.
+which happens between a storage node and a client, is defined in `com.ibm.crail.storage` package and implemented by 
+`com.ibm.crail.storage.netty.NettyStorageTier`.
 
 ## Building 
 
@@ -25,10 +25,10 @@ Alternatively you can also put these files in your custom classpath (if you have
 The current code accepts following parameters (shown here with their default values):
 
 ```bash
-crail.datanode.netty.storagelimit    1073741824
-crail.datanode.netty.allocationsize  1073741824
-crail.datanode.netty.interface       lo 
-crail.datanode.netty.port            19862
+crail.storage.netty.storagelimit    1073741824
+crail.storage.netty.allocationsize  1073741824
+crail.storage.netty.interface       lo 
+crail.storage.netty.port            19862
 ```
 
 You should put them in the `$CRAIL_HOME/conf/crail-site.conf` file.
@@ -37,18 +37,18 @@ You should put them in the `$CRAIL_HOME/conf/crail-site.conf` file.
 the next release.
 
 ## Enabling data transfer on Netty
-Instructions to start a crail datanode is mostly similar to crail (https://github.com/zrlio/crail#deploying). 
-Crail-netty implements a specific type of Crail datanode which does data transfers to a client over netty. To 
-run this crail-netty datanode: 
+Instructions to start a crail storage node is mostly similar to crail (https://github.com/zrlio/crail#deploying). 
+Crail-netty implements a specific type of Crail storage node which does data transfers to a client over netty. To 
+run this crail-netty stroage node: 
 ```bash 
-$CRAIL_HOME/bin/crail datanode -t com.ibm.crail.datanode.netty.NettyDataNode
+$CRAIL_HOME/bin/crail datanode -t com.ibm.crail.storage.netty.NettyStorageTier
 ```
-In order for a client to automatically pick up connection to the new datanode type, you have to add following class 
-to your list of datanode types in the `$CRAIL_HOME/conf/crail-site.conf` file. You can have a comma separated 
-list as (if just deploying with netty, you can delete all other types except `NettyDataNode`) : 
+In order for a client to automatically pick up connection to the new storage node type, you have to add following class 
+to your list of storage types types in the `$CRAIL_HOME/conf/crail-site.conf` file. You can have a comma separated 
+list as (if just deploying with netty, you can delete all other types except `NettyStorageTier`) : 
 
 ```bash
-crail.datanode.types  com.ibm.crail.datanode.rdma.RdmaDataNode,com.ibm.crail.datanode.netty.NettyDataNode
+crail.storage.types  com.ibm.crail.storage.rdma.RdmaStorageTier,com.ibm.crail.storage.netty.NettyStorageTier
 ```
 
 ## Enabling Netty RPCs
@@ -62,12 +62,12 @@ crail.namenode.rpc.type  com.ibm.crail.namenode.rpc.NettyNameNode
 
 ## Setting up automatic deployment
 
-To enable deployment via `$CRAIL_HOME/bin/start-crail.sh`, you should use `-t` flag to define netty datanodes in the 
+To enable deployment via `$CRAIL_HOME/bin/start-crail.sh`, you should use `-t` flag to define netty storage node in the 
 the crail slave file (`$CRAIL_HOME/conf/slave`). An example slave file might look something like this: 
 ```bash
-hostname1 -t com.ibm.crail.datanode.netty.NettyDataNode
-hostname2 -t com.ibm.crail.datanode.netty.NettyDataNode
-hostname3 -t com.ibm.crail.datanode.netty.NettyDataNode
+hostname1 -t com.ibm.crail.storage.netty.NettyStorageTier
+hostname2 -t com.ibm.crail.storage.netty.NettyStorageTier
+hostname3 -t com.ibm.crail.storage.netty.NettyStorageTier
 ...
 ```
 
@@ -113,11 +113,11 @@ crail.namenode.address         crail://localhost:9060
 crail.namenode.blockselection  roundrobin
 crail.namenode.rpc.type        com.ibm.crail.namenode.rpc.netty.NettyNameNode
 
-crail.storage.types com.ibm.crail.datanode.netty.NettyStorageTier
-crail.datanode.netty.storagelimit       1073741824
-crail.datanode.netty.allocationsize     1073741824
-crail.datanode.netty.interface          lo
-crail.datanode.netty.port               19862
+crail.storage.types com.ibm.crail.storage.netty.NettyStorageTier
+crail.storage.netty.storagelimit       1073741824
+crail.storage.netty.allocationsize     1073741824
+crail.storage.netty.interface          lo
+crail.storage.netty.port               19862
 ```
 ## A word on performance 
 The crail-netty port meant to facilitate experience and testing of crail file system for non-RDMA networks. Clearly, 

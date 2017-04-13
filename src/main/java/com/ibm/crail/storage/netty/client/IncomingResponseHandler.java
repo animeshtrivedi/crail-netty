@@ -20,9 +20,9 @@
  *
  */
 
-package com.ibm.crail.datanode.netty.client;
+package com.ibm.crail.storage.netty.client;
 
-import com.ibm.crail.datanode.netty.rpc.RdmaMsgRx;
+import com.ibm.crail.storage.netty.rpc.RdmaMsgRx;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

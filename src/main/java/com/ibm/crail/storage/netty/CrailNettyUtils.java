@@ -20,7 +20,7 @@
  *
  */
 
-package com.ibm.crail.datanode.netty;
+package com.ibm.crail.storage.netty;
 
 import io.netty.buffer.ByteBuf;
 
@@ -37,7 +37,7 @@ public class CrailNettyUtils {
     private CrailNettyUtils(){}
     public static synchronized Logger getLogger() {
         if(LOG == null) {
-            LOG = LoggerFactory.getLogger("com.ibm.crail.datanode.netty");
+            LOG = LoggerFactory.getLogger("com.ibm.crail.storage.netty");
         }
         return LOG;
     }

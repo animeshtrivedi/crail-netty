@@ -23,7 +23,7 @@
 package com.ibm.crail.namenode.rpc.netty.client;
 
 import com.ibm.crail.CrailNodeType;
-import com.ibm.crail.datanode.netty.CrailNettyUtils;
+import com.ibm.crail.storage.netty.CrailNettyUtils;
 import com.ibm.crail.metadata.BlockInfo;
 import com.ibm.crail.metadata.DataNodeInfo;
 import com.ibm.crail.metadata.FileInfo;

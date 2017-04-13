@@ -20,17 +20,15 @@
  *
  */
 
-package com.ibm.crail.datanode.netty.server;
+package com.ibm.crail.storage.netty.server;
 
 import java.net.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.ibm.crail.datanode.netty.NettyConstants;
-import com.ibm.crail.datanode.netty.NettyStorageTier;
-import com.ibm.crail.datanode.netty.CrailNettyUtils;
-import com.ibm.crail.datanode.netty.rpc.RdmaDecoderRx;
-import com.ibm.crail.metadata.DataNodeStatistics;
+import com.ibm.crail.storage.netty.NettyConstants;
+import com.ibm.crail.storage.netty.CrailNettyUtils;
+import com.ibm.crail.storage.netty.rpc.RdmaDecoderRx;
 import com.ibm.crail.storage.StorageRpcClient;
 import com.ibm.crail.storage.StorageServer;
 import io.netty.bootstrap.ServerBootstrap;
@@ -72,7 +70,7 @@ public class NettyStorageServer implements Runnable, StorageServer {
     }
 
     private InetSocketAddress getNettyDataNodeAddress() {
-        if(null == NettyConstants.DATANODE_NETTY_INTERFACE) {
+        if(null == NettyConstants.STORAGENODE_NETTY_INTERFACE) {
                 /* we need to init it */
             NetworkInterface netif = null;
             try {
@@ -91,11 +89,11 @@ public class NettyStorageServer implements Runnable, StorageServer {
                     addr = address.getAddress();
                 }
             }
-            NettyConstants.DATANODE_NETTY_INTERFACE = new InetSocketAddress(addr,
-                    NettyConstants.DATANODE_NETTY_PORT);
+            NettyConstants.STORAGENODE_NETTY_INTERFACE = new InetSocketAddress(addr,
+                    NettyConstants.STORAGENODE_NETTY_PORT);
         }
         /* once you have it always return it */
-        return NettyConstants.DATANODE_NETTY_INTERFACE;
+        return NettyConstants.STORAGENODE_NETTY_INTERFACE;
     }
 
     public void run() {
@@ -143,34 +141,34 @@ public class NettyStorageServer implements Runnable, StorageServer {
     }
 
     public void registerResources(StorageRpcClient storageRpcClient) throws Exception {
-        int entries = (int) (NettyConstants.DATANODE_NETTY_STORAGE_LIMIT/NettyConstants.DATANODE_NETTY_ALLOCATION_SIZE);
+        int entries = (int) (NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT /NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
         map = new ConcurrentHashMap<Integer, ByteBuf>(entries);
-        LOG.info("Registering resources with " + entries + " nums of " + NettyConstants.DATANODE_NETTY_ALLOCATION_SIZE + " byte buffers");
+        LOG.info("Registering resources with " + entries + " nums of " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE + " byte buffers");
         /* now the Namenode Processor communication part */
         long allocated = 0;
         double perc;
-        LOG.info("Allocation started for the target of : " + NettyConstants.DATANODE_NETTY_STORAGE_LIMIT);
-        while(allocated < NettyConstants.DATANODE_NETTY_STORAGE_LIMIT) {
+        LOG.info("Allocation started for the target of : " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT);
+        while(allocated < NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT) {
             /* allocate a new buffer */
-            ByteBuf buf = directBuffer((int) NettyConstants.DATANODE_NETTY_ALLOCATION_SIZE,
-                    (int) NettyConstants.DATANODE_NETTY_ALLOCATION_SIZE);
+            ByteBuf buf = directBuffer((int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE,
+                    (int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
             /* retain this buffer */
             buf.retain();
             Long address = ((DirectBuffer) buf.nioBuffer()).address();
 
             /* update entries */
             map.put(this.currentStag, buf);
-            storageRpcClient.setBlock(address, (int) NettyConstants.DATANODE_NETTY_ALLOCATION_SIZE, this.currentStag);
+            storageRpcClient.setBlock(address, (int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE, this.currentStag);
             LOG.info("MAP entry : " + Long.toHexString(address) +
-                    " length : " + (int) NettyConstants.DATANODE_NETTY_ALLOCATION_SIZE +
+                    " length : " + (int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE +
                     " stag : " + this.currentStag + " refCount: " + buf.refCnt());
 
             /* update counters */
-            allocated += NettyConstants.DATANODE_NETTY_ALLOCATION_SIZE;
-            perc=allocated * 100 / NettyConstants.DATANODE_NETTY_STORAGE_LIMIT;
+            allocated += NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE;
+            perc=allocated * 100 / NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT;
             this.currentStag++;
             LOG.info("Allocation done : " + perc + "% , allocated " + allocated +
-                    " / " + NettyConstants.DATANODE_NETTY_STORAGE_LIMIT);
+                    " / " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT);
         }
     }
 

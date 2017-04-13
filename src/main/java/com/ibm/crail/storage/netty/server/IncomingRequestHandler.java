@@ -20,13 +20,12 @@
  *
  */
 
-package com.ibm.crail.datanode.netty.server;
+package com.ibm.crail.storage.netty.server;
 
-import com.ibm.crail.datanode.netty.NettyStorageTier;
-import com.ibm.crail.datanode.netty.CrailNettyUtils;
-import com.ibm.crail.datanode.netty.rpc.MessageTypes;
-import com.ibm.crail.datanode.netty.rpc.RdmaMsgRx;
-import com.ibm.crail.datanode.netty.rpc.RdmaMsgTx;
+import com.ibm.crail.storage.netty.CrailNettyUtils;
+import com.ibm.crail.storage.netty.rpc.MessageTypes;
+import com.ibm.crail.storage.netty.rpc.RdmaMsgRx;
+import com.ibm.crail.storage.netty.rpc.RdmaMsgTx;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
