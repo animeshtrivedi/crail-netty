@@ -75,7 +75,7 @@ hostname3 -t com.ibm.crail.datanode.netty.NettyDataNode
 Here is the content of `core-site.xml` and `crail-site.conf` when you just want to configure crail to run on localhost
 using netty
  
-####`core-site.xml` 
+`core-site.xml` 
 
 ```bash
 <configuration>
@@ -99,21 +99,21 @@ using netty
  
 ```
 
-####`crail-site.conf`
+`crail-site.conf`
 ```bash 
-crail.blocksize			    	        1048576
-crail.buffersize			            1048576
-crail.regionsize			            1073741824
-crail.cachelimit			            1073741824
-crail.cachepath				            /tmp/
-crail.singleton				            true
-crail.statistics 			            true
-crail.namenode.address			        crail://localhost:9060
-crail.namenode.blockselection	    	roundrobin
+crail.blocksize   1048576
+crail.buffersize  1048576
+crail.regionsize  1073741824
+crail.cachelimit  1073741824
+crail.cachepath   /tmp/
+crail.singleton   true
+crail.statistics  true
 
-crail.namenode.rpc.type                 com.ibm.crail.namenode.rpc.netty.NettyNameNode
+crail.namenode.address         crail://localhost:9060
+crail.namenode.blockselection  roundrobin
+crail.namenode.rpc.type        com.ibm.crail.namenode.rpc.netty.NettyNameNode
 
-crail.storage.types 		            com.ibm.crail.datanode.netty.NettyStorageTier
+crail.storage.types com.ibm.crail.datanode.netty.NettyStorageTier
 crail.datanode.netty.storagelimit       1073741824
 crail.datanode.netty.allocationsize     1073741824
 crail.datanode.netty.interface          lo
