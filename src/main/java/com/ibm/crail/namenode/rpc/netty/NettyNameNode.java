@@ -22,6 +22,7 @@
 
 package com.ibm.crail.namenode.rpc.netty;
 
+import com.ibm.crail.conf.CrailConfiguration;
 import com.ibm.crail.storage.netty.CrailNettyUtils;
 import com.ibm.crail.namenode.rpc.netty.client.NettyRPCNamenodeClientGroup;
 import com.ibm.crail.namenode.rpc.netty.common.*;
@@ -38,6 +39,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 
 public class NettyNameNode implements RpcBinding {
@@ -89,6 +91,14 @@ public class NettyNameNode implements RpcBinding {
             acceptGroup.shutdownGracefully();
             LOG.info("Netty namenode at " + inetSocketAddress + " is shutdown");
         }
+    }
+
+    public void init(CrailConfiguration crailConfiguration, String[] strings) throws IOException {
+        /* for now these are no-ops */
+    }
+
+    public void printConf(Logger logger) {
+        /* for now these are no-ops */
     }
 
     /* This function comes from RPCClient interface */

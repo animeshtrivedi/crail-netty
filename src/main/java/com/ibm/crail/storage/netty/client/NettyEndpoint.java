@@ -22,18 +22,17 @@
 
 package com.ibm.crail.storage.netty.client;
 
+import com.ibm.crail.storage.StorageFuture;
 import com.ibm.crail.storage.netty.rpc.MessageTypes;
 import com.ibm.crail.storage.netty.rpc.RdmaMsgTx;
 import com.ibm.crail.metadata.BlockInfo;
 
-import com.ibm.crail.storage.DataResult;
 import com.ibm.crail.storage.StorageEndpoint;
 import io.netty.channel.*;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.concurrent.Future;
 
 public class NettyEndpoint implements StorageEndpoint {
     private Channel noAtomicClientChannel;
@@ -57,7 +56,7 @@ public class NettyEndpoint implements StorageEndpoint {
         return ftx;
     }
 
-    public Future<DataResult> write(ByteBuffer wBuffer, ByteBuffer region, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
+    public StorageFuture write(ByteBuffer wBuffer, ByteBuffer region, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
         final RdmaMsgTx tx = new RdmaMsgTx();
         long id = this.group.getNextSlot();
         NettyIOResult w = new NettyIOResult();
@@ -83,7 +82,7 @@ public class NettyEndpoint implements StorageEndpoint {
         return w;
     }
 
-    public Future<DataResult> read(ByteBuffer rBuffer, ByteBuffer region, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
+    public StorageFuture read(ByteBuffer rBuffer, ByteBuffer region, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
         RdmaMsgTx tx = new RdmaMsgTx();
         long id = this.group.getNextSlot();
         NettyIOResult r = new NettyIOResult();

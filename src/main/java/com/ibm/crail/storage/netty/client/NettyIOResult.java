@@ -22,17 +22,17 @@
 
 package com.ibm.crail.storage.netty.client;
 
+import com.ibm.crail.storage.StorageFuture;
+import com.ibm.crail.storage.StorageResult;
 import com.ibm.crail.storage.netty.rpc.MessageTypes;
 import com.ibm.crail.storage.netty.rpc.RdmaMsgRx;
-import com.ibm.crail.storage.DataResult;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class NettyIOResult implements DataResult, Future<DataResult> {
+public class NettyIOResult implements StorageFuture, StorageResult {
     private int length;
     private boolean finished;
     private ByteBuffer dest;
@@ -115,7 +115,7 @@ public class NettyIOResult implements DataResult, Future<DataResult> {
         return finished;
     }
 
-    public DataResult get() throws InterruptedException, ExecutionException {
+    public StorageResult get() throws InterruptedException, ExecutionException {
         synchronized (this) {
             if (!finished) {
                 // then we have to block until finished is marked set
@@ -131,7 +131,7 @@ public class NettyIOResult implements DataResult, Future<DataResult> {
         return this;
     }
 
-    public DataResult get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public StorageResult get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         /* otherwise we wait */
         synchronized (this) {
             if (!finished) {
@@ -146,5 +146,9 @@ public class NettyIOResult implements DataResult, Future<DataResult> {
             throw new InternalError(" The data IO operation has error ");
 
         return this;
+    }
+
+    public boolean isSynchronous() {
+        return false;
     }
 }
