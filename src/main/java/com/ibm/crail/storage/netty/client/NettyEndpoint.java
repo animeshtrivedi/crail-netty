@@ -22,13 +22,14 @@
 
 package com.ibm.crail.storage.netty.client;
 
+import com.ibm.crail.CrailBuffer;
+import com.ibm.crail.metadata.BlockInfo;
+import com.ibm.crail.storage.StorageEndpoint;
 import com.ibm.crail.storage.StorageFuture;
 import com.ibm.crail.storage.netty.rpc.MessageTypes;
 import com.ibm.crail.storage.netty.rpc.RdmaMsgTx;
-import com.ibm.crail.metadata.BlockInfo;
-
-import com.ibm.crail.storage.StorageEndpoint;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.IOException;
@@ -56,10 +57,11 @@ public class NettyEndpoint implements StorageEndpoint {
         return ftx;
     }
 
-    public StorageFuture write(ByteBuffer wBuffer, ByteBuffer region, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
+    public StorageFuture write(CrailBuffer wBufferC, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
         final RdmaMsgTx tx = new RdmaMsgTx();
         long id = this.group.getNextSlot();
         NettyIOResult w = new NettyIOResult();
+        ByteBuffer wBuffer = wBufferC.getByteBuffer();
         int len = wBuffer.remaining();
         w.initWrite(id, len);
         this.group.insertNewInflight(id, w);
@@ -82,10 +84,11 @@ public class NettyEndpoint implements StorageEndpoint {
         return w;
     }
 
-    public StorageFuture read(ByteBuffer rBuffer, ByteBuffer region, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
+    public StorageFuture read(CrailBuffer rBufferC, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
         RdmaMsgTx tx = new RdmaMsgTx();
         long id = this.group.getNextSlot();
         NettyIOResult r = new NettyIOResult();
+        ByteBuffer rBuffer = rBufferC.getByteBuffer();
         int len = rBuffer.limit() - rBuffer.position();
         r.initRead(id, len, rBuffer);
         this.group.insertNewInflight(id, r);
