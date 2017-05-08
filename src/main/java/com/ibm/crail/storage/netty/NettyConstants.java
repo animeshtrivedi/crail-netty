@@ -22,10 +22,10 @@
 
 package com.ibm.crail.storage.netty;
 
+import com.ibm.crail.conf.CrailConfiguration;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
-
-import com.ibm.crail.conf.CrailConfiguration;
 
 public class NettyConstants {
     public static final String STORAGENODE_NETTY_STORAGE_LIMIT_KEY = "crail.storage.netty.storagelimit";

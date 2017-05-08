@@ -23,17 +23,15 @@
 package com.ibm.crail.storage.netty;
 
 import com.ibm.crail.conf.CrailConfiguration;
-import com.ibm.crail.storage.netty.client.NettyEndpointGroup;
-import com.ibm.crail.storage.netty.server.NettyStorageServer;
-
 import com.ibm.crail.storage.StorageEndpoint;
 import com.ibm.crail.storage.StorageServer;
 import com.ibm.crail.storage.StorageTier;
-
+import com.ibm.crail.storage.netty.client.NettyEndpointGroup;
+import com.ibm.crail.storage.netty.server.NettyStorageServer;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.InetSocketAddress;
 
 public class NettyStorageTier extends StorageTier {
     static private final Logger LOG = CrailNettyUtils.getLogger();
@@ -58,6 +56,7 @@ public class NettyStorageTier extends StorageTier {
     }
 
     public StorageEndpoint createEndpoint(InetSocketAddress inetAddress) throws IOException{
+        LOG.debug(" Opening a connection to StorageNode: " + inetAddress.toString());
         /* we protect the call for init of the common framework */
         synchronized(this) {
             /* this is kind of ugly as I am tying to save the cost of allocating the end point group on the

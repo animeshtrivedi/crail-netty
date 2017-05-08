@@ -23,7 +23,6 @@
 package com.ibm.crail.namenode.rpc.netty.common;
 
 import com.ibm.crail.namenode.rpc.netty.client.NettyRPCNamenodeClientGroup;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;

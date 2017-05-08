@@ -23,7 +23,6 @@
 package com.ibm.crail.storage.netty;
 
 import io.netty.buffer.ByteBuf;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

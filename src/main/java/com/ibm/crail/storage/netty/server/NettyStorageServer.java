@@ -22,17 +22,12 @@
 
 package com.ibm.crail.storage.netty.server;
 
-import java.net.*;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.ibm.crail.storage.netty.NettyConstants;
-import com.ibm.crail.storage.netty.CrailNettyUtils;
-import com.ibm.crail.storage.netty.rpc.RdmaDecoderRx;
 import com.ibm.crail.storage.StorageRpcClient;
 import com.ibm.crail.storage.StorageServer;
+import com.ibm.crail.storage.netty.CrailNettyUtils;
+import com.ibm.crail.storage.netty.NettyConstants;
+import com.ibm.crail.storage.netty.rpc.RdmaDecoderRx;
 import io.netty.bootstrap.ServerBootstrap;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -43,6 +38,10 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import sun.nio.ch.DirectBuffer;
+
+import java.net.*;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static io.netty.buffer.Unpooled.directBuffer;
 

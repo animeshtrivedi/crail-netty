@@ -22,11 +22,10 @@
 
 package com.ibm.crail.namenode.rpc.netty.client;
 
-import com.ibm.crail.storage.netty.CrailNettyUtils;
 import com.ibm.crail.namenode.rpc.netty.common.NettyResponse;
 import com.ibm.crail.namenode.rpc.netty.common.RequestEncoder;
 import com.ibm.crail.namenode.rpc.netty.common.ResponseDecoder;
-
+import com.ibm.crail.storage.netty.CrailNettyUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -35,7 +34,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;

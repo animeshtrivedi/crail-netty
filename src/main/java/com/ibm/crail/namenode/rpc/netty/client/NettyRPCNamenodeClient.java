@@ -23,7 +23,6 @@
 package com.ibm.crail.namenode.rpc.netty.client;
 
 import com.ibm.crail.CrailNodeType;
-import com.ibm.crail.storage.netty.CrailNettyUtils;
 import com.ibm.crail.metadata.BlockInfo;
 import com.ibm.crail.metadata.DataNodeInfo;
 import com.ibm.crail.metadata.FileInfo;
@@ -31,11 +30,9 @@ import com.ibm.crail.metadata.FileName;
 import com.ibm.crail.namenode.rpc.netty.common.NettyRequest;
 import com.ibm.crail.namenode.rpc.netty.common.NettyResponse;
 import com.ibm.crail.namenode.rpc.netty.common.NettyResponseFuture;
-
-
 import com.ibm.crail.rpc.*;
+import com.ibm.crail.storage.netty.CrailNettyUtils;
 import io.netty.channel.Channel;
-
 import org.slf4j.Logger;
 
 import java.io.IOException;

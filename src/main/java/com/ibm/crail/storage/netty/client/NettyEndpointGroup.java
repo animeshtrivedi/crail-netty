@@ -22,18 +22,19 @@
 
 package com.ibm.crail.storage.netty.client;
 
+import com.ibm.crail.storage.StorageEndpoint;
 import com.ibm.crail.storage.netty.CrailNettyUtils;
 import com.ibm.crail.storage.netty.rpc.RdmaDecoderRx;
-
-import com.ibm.crail.storage.StorageEndpoint;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -91,7 +92,7 @@ public class NettyEndpointGroup {
             Channel clientChannel = boot.connect(inetSocketAddress.getAddress(),
                     inetSocketAddress.getPort()).addListener(new GenericFutureListener<Future<? super Void>>() {
                 public void operationComplete(Future<? super Void> future) throws Exception {
-                    LOG.info("A client -> storagenode connection established to : " + inetSocketAddress);
+                    LOG.debug("StorageNode connection established to : " + inetSocketAddress);
                 }
             }).sync().channel();
             ep = new NettyEndpoint(this, clientChannel);

@@ -22,15 +22,13 @@
 
 package com.ibm.crail.namenode.rpc.netty;
 
-import com.ibm.crail.storage.netty.CrailNettyUtils;
 import com.ibm.crail.namenode.rpc.netty.common.NettyRequest;
 import com.ibm.crail.namenode.rpc.netty.common.NettyResponse;
-
 import com.ibm.crail.rpc.RpcNameNodeService;
 import com.ibm.crail.rpc.RpcProtocol;
+import com.ibm.crail.storage.netty.CrailNettyUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
 import org.slf4j.Logger;
 
 public class NamenodeProcessor extends SimpleChannelInboundHandler<NettyRequest> {
