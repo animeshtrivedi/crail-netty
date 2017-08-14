@@ -117,7 +117,7 @@ public class NettyEndpointGroup {
         workerGroup.shutdownGracefully();
     }
 
-    public String toString() {
+    final public String toString() {
         return " <TBD> NettyEndpointGroup ! ";
     }
 

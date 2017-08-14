@@ -53,7 +53,7 @@ public class NettyNameNode implements RpcBinding {
     }
 
     /* This is inherited from the RPCBinding - the passed service object is where the RPCs are processed. */
-    public void run(final RpcNameNodeService service){
+    final public void run(final RpcNameNodeService service){
         /* here we run the incoming RPC service */
         InetSocketAddress inetSocketAddress = CrailUtils.getNameNodeAddress();
         LOG.info("Starting the NettyNamenode service at : " + inetSocketAddress);
@@ -95,16 +95,16 @@ public class NettyNameNode implements RpcBinding {
         }
     }
 
-    public void init(CrailConfiguration crailConfiguration, String[] strings) throws IOException {
+    final public void init(CrailConfiguration crailConfiguration, String[] strings) throws IOException {
         /* for now these are no-ops */
     }
 
-    public void printConf(Logger logger) {
+    final public void printConf(Logger logger) {
         /* for now these are no-ops */
     }
 
     /* This function comes from RPCClient interface */
-    public RpcConnection connect(InetSocketAddress address) {
+    final public RpcConnection connect(InetSocketAddress address) {
         if(clientGroup == null) {
             /* this should be the client side code */
             clientGroup = new NettyRPCNamenodeClientGroup();
@@ -113,7 +113,7 @@ public class NettyNameNode implements RpcBinding {
     }
 
     /* This function comes from RPCClient interface */
-    public void close(){
+    final public void close(){
         if(this.clientGroup != null) {
             /* after this close rest of the infrastructure */
             this.clientGroup.closeClientGroup();

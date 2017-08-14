@@ -22,6 +22,7 @@
 
 package com.ibm.crail.storage.netty.server;
 
+import com.ibm.crail.storage.StorageResource;
 import com.ibm.crail.storage.StorageRpcClient;
 import com.ibm.crail.storage.StorageServer;
 import com.ibm.crail.storage.netty.CrailNettyUtils;
@@ -55,6 +56,7 @@ public class NettyStorageServer implements Runnable, StorageServer {
     private ConcurrentHashMap<Integer, ByteBuf> map;
     private int currentStag;
     private boolean isRunning;
+    long allocated;
 
     public NettyStorageServer(){
         this.inetSocketAddress = getNettyDataNodeAddress();
@@ -62,9 +64,15 @@ public class NettyStorageServer implements Runnable, StorageServer {
         /* we start with 1 stag, and then every time we allocate a new block we increment it by 1 */
         this.currentStag = 1;
         this.isRunning = false;
+        this.allocated = 0;
+        int entries = (int) (NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT /NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
+        this.map = new ConcurrentHashMap<Integer, ByteBuf>(entries);
+        LOG.info(" constructor, alloc size " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE +
+                " limit " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT +
+                " gives #entries " + entries);
     }
 
-    public InetSocketAddress getAddress() {
+    final public InetSocketAddress getAddress() {
         return this.inetSocketAddress;
     }
 
@@ -95,7 +103,7 @@ public class NettyStorageServer implements Runnable, StorageServer {
         return NettyConstants.STORAGENODE_NETTY_INTERFACE;
     }
 
-    public void run() {
+    final public void run() {
         /* start the netty server */
         EventLoopGroup acceptGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -119,10 +127,10 @@ public class NettyStorageServer implements Runnable, StorageServer {
                     //ch.pipeline().addLast(new RdmaEncoderTx());
                 }
             });
+            this.isRunning = true;
             /* general optimization settings */
             boot.option(ChannelOption.SO_BACKLOG, 1024);
             boot.childOption(ChannelOption.SO_KEEPALIVE, true);
-            this.isRunning = true;
             /* now we bind the server and start */
             ChannelFuture f = boot.bind(this.inetSocketAddress.getAddress(),
                     this.inetSocketAddress.getPort()).sync();
@@ -139,29 +147,25 @@ public class NettyStorageServer implements Runnable, StorageServer {
         }
     }
 
-    public void registerResources(StorageRpcClient storageRpcClient) throws Exception {
-        int entries = (int) (NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT /NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
-        map = new ConcurrentHashMap<Integer, ByteBuf>(entries);
-        LOG.info("Registering resources with " + entries + " nums of " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE + " byte buffers");
-        /* now the Namenode Processor communication part */
-        long allocated = 0;
+    final public StorageResource allocateResource() throws Exception {
         double perc;
-        LOG.info("Allocation started for the target of : " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT);
-        while(allocated < NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT) {
+        StorageResource res = null;
+        /* Have we already allocated all? then return null */
+        if(allocated < NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT) {
             /* allocate a new buffer */
             ByteBuf buf = directBuffer((int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE,
                     (int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
             /* retain this buffer */
             buf.retain();
             Long address = ((DirectBuffer) buf.nioBuffer()).address();
-
             /* update entries */
             map.put(this.currentStag, buf);
-            storageRpcClient.setBlock(address, (int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE, this.currentStag);
+            res = StorageResource.createResource(address,
+                    (int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE,
+                    this.currentStag);
             LOG.info("MAP entry : " + Long.toHexString(address) +
                     " length : " + (int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE +
                     " stag : " + this.currentStag + " refCount: " + buf.refCnt());
-
             /* update counters */
             allocated += NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE;
             perc=allocated * 100 / NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT;
@@ -169,10 +173,12 @@ public class NettyStorageServer implements Runnable, StorageServer {
             LOG.info("Allocation done : " + perc + "% , allocated " + allocated +
                     " / " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT);
         }
+        return res;
     }
 
-    public boolean isAlive() {
-        return this.isRunning;
+    final public boolean isAlive() {
+        //TODO: there is a race here between launchServer and checking of alive. This needs to be cleaned properly.
+        return true;
     }
 
     public void join() throws Exception {

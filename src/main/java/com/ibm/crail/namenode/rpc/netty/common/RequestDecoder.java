@@ -30,7 +30,7 @@ import java.util.List;
 
 public class RequestDecoder extends ByteToMessageDecoder {
     @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
+    final protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
         /* here we have to do the same exercise */
         if(NettyRequest.CSIZE > byteBuf.readableBytes()) {
             return;

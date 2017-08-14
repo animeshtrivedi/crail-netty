@@ -72,7 +72,7 @@ public class RdmaMsgTx extends RdmaMsgHeader {
         return txPayload;
     }
 
-    public String toString() {
+    final public String toString() {
         return super.toString() + " txPayload: " + (this.txPayload == null?" NULL ":" NotNULL ");
     }
 }

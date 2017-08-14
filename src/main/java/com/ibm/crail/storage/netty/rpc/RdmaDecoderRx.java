@@ -41,16 +41,16 @@ public class RdmaDecoderRx extends ByteToMessageDecoder {
         state = DecoderState.WAIT_FOR_HEADER;
     }
 
-    protected void handlerRemoved0(ChannelHandlerContext ctx) throws Exception {
+    final protected void handlerRemoved0(ChannelHandlerContext ctx) throws Exception {
         rxMsg = null;
         state = DecoderState.WAIT_FOR_HEADER;
     }
 
-    public void handlerAdded(ChannelHandlerContext ctx) {
+    final public void handlerAdded(ChannelHandlerContext ctx) {
         state = DecoderState.WAIT_FOR_HEADER;
     }
 
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
+    final protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         switch (state) {
             case WAIT_FOR_HEADER:
                 /* in case of init and bytes not ready, we return immediately */

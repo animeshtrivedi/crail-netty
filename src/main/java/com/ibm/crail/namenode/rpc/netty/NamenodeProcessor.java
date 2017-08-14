@@ -40,7 +40,7 @@ public class NamenodeProcessor extends SimpleChannelInboundHandler<NettyRequest>
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, NettyRequest request) throws Exception {
+    final protected void channelRead0(ChannelHandlerContext ctx, NettyRequest request) throws Exception {
         NettyResponse response = new NettyResponse();
         short error;
         try {

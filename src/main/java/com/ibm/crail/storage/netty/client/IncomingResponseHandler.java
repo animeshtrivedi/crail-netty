@@ -34,7 +34,7 @@ public class IncomingResponseHandler extends SimpleChannelInboundHandler<RdmaMsg
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, RdmaMsgRx rxMsg) throws Exception {
+    final protected void channelRead0(ChannelHandlerContext channelHandlerContext, RdmaMsgRx rxMsg) throws Exception {
         long cookie = rxMsg.cookie();
         NettyIOResult result = this.group.getAndRemoveInflight(cookie);
         assert result!=null;

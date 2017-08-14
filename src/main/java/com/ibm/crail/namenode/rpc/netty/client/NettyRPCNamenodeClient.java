@@ -47,7 +47,7 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         this.group = grp;
     }
 
-    public String toString(){
+    final public String toString(){
         return this.clientChannel.toString();
     }
 
@@ -56,7 +56,7 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         this.clientChannel.close();
     }
 
-    public RpcFuture<RpcCreateFile> createFile(FileName fileName, CrailNodeType type, int storageAffinity, int locationAffinity) throws IOException {
+    final public RpcFuture<RpcCreateFile> createFile(FileName fileName, CrailNodeType type, int storageAffinity, int locationAffinity) throws IOException {
         long cookie = this.group.getNextSlot();
         /* get a new request that will travel on wire */
         RpcRequestMessage.CreateFileReq req = new RpcRequestMessage.CreateFileReq(fileName,
@@ -74,7 +74,7 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         return resultF;
     }
 
-    public RpcFuture<RpcGetFile> getFile(FileName fileName, boolean b) throws IOException {
+    final public RpcFuture<RpcGetFile> getFile(FileName fileName, boolean b) throws IOException {
         long cookie = this.group.getNextSlot();
         /* get a new request that will travel on wire */
         RpcRequestMessage.GetFileReq req = new RpcRequestMessage.GetFileReq(fileName, b);
@@ -90,7 +90,7 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         return resultF;
     }
 
-    public RpcFuture<RpcVoid> setFile(FileInfo fileInfo, boolean b) throws IOException {
+    final public RpcFuture<RpcVoid> setFile(FileInfo fileInfo, boolean b) throws IOException {
         long cookie = this.group.getNextSlot();
         /* get a new request that will travel on wire */
         RpcRequestMessage.SetFileReq req = new RpcRequestMessage.SetFileReq(fileInfo, b);
@@ -106,7 +106,7 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         return resultF;
     }
 
-    public RpcFuture<RpcDeleteFile> removeFile(FileName fileName, boolean b) throws IOException {
+    final public RpcFuture<RpcDeleteFile> removeFile(FileName fileName, boolean b) throws IOException {
         long cookie = this.group.getNextSlot();
         /* get a new request that will travel on wire */
         RpcRequestMessage.RemoveFileReq req = new RpcRequestMessage.RemoveFileReq(fileName, b);
@@ -122,7 +122,7 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         return resultF;
     }
 
-    public RpcFuture<RpcRenameFile> renameFile(FileName fileName, FileName fileName1) throws IOException {
+    final public RpcFuture<RpcRenameFile> renameFile(FileName fileName, FileName fileName1) throws IOException {
         long cookie = this.group.getNextSlot();
         /* get a new request that will travel on wire */
         RpcRequestMessage.RenameFileReq req = new RpcRequestMessage.RenameFileReq(fileName, fileName1);
@@ -138,13 +138,10 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         return resultF;
     }
 
-    public RpcFuture<RpcGetBlock> getBlock(long fd, long token, long position,
-                                           int storageAffinity, int locationAffinity,
-                                           long capacity) throws IOException {
+    final public RpcFuture<RpcGetBlock> getBlock(long fd, long token, long position, long capacity) throws IOException {
         long cookie = this.group.getNextSlot();
         /* get a new request that will travel on wire */
-        RpcRequestMessage.GetBlockReq req = new RpcRequestMessage.GetBlockReq(fd, token, position,
-                storageAffinity, locationAffinity, capacity);
+        RpcRequestMessage.GetBlockReq req = new RpcRequestMessage.GetBlockReq(fd, token, position, capacity);
         /* get a response back that will be serialized */
         RpcResponseMessage.GetBlockRes resp = new RpcResponseMessage.GetBlockRes();
         /* construct a response */
@@ -157,7 +154,7 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         return resultF;
     }
 
-    public RpcFuture<RpcGetLocation> getLocation(FileName fileName, long l) throws IOException {
+    final public RpcFuture<RpcGetLocation> getLocation(FileName fileName, long l) throws IOException {
         long cookie = this.group.getNextSlot();
         /* get a new request that will travel on wire */
         RpcRequestMessage.GetLocationReq req = new RpcRequestMessage.GetLocationReq(fileName, l);
@@ -173,7 +170,7 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         return resultF;
     }
 
-    public RpcFuture<RpcVoid> setBlock(BlockInfo blockInfo) throws Exception {
+    final public RpcFuture<RpcVoid> setBlock(BlockInfo blockInfo) throws Exception {
         long cookie = this.group.getNextSlot();
         /* get a new request that will travel on wire */
         RpcRequestMessage.SetBlockReq req = new RpcRequestMessage.SetBlockReq(blockInfo);
@@ -189,7 +186,7 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         return resultF;
     }
 
-    public RpcFuture<RpcGetDataNode> getDataNode(DataNodeInfo dataNodeInfo) throws Exception {
+    final public RpcFuture<RpcGetDataNode> getDataNode(DataNodeInfo dataNodeInfo) throws Exception {
         long cookie = this.group.getNextSlot();
         /* get a new request that will travel on wire */
         RpcRequestMessage.GetDataNodeReq req = new RpcRequestMessage.GetDataNodeReq(dataNodeInfo);
@@ -205,7 +202,7 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         return resultF;
     }
 
-    public RpcFuture<RpcVoid> dumpNameNode() throws Exception {
+    final public RpcFuture<RpcVoid> dumpNameNode() throws Exception {
         long cookie = this.group.getNextSlot();
         /* get a new request that will travel on wire */
         RpcRequestMessage.DumpNameNodeReq req = new RpcRequestMessage.DumpNameNodeReq();
@@ -221,7 +218,7 @@ public class NettyRPCNamenodeClient implements RpcConnection {
         return resultF;
     }
 
-    public RpcFuture<RpcPing> pingNameNode() throws Exception {
+    final public RpcFuture<RpcPing> pingNameNode() throws Exception {
         long cookie = this.group.getNextSlot();
         /* get a new request that will travel on wire */
         RpcRequestMessage.PingNameNodeReq req = new RpcRequestMessage.PingNameNodeReq();

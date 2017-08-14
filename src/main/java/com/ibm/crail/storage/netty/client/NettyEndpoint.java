@@ -57,7 +57,7 @@ public class NettyEndpoint implements StorageEndpoint {
         return ftx;
     }
 
-    public StorageFuture write(CrailBuffer wBufferC, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
+    final public StorageFuture write(CrailBuffer wBufferC, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
         final RdmaMsgTx tx = new RdmaMsgTx();
         long id = this.group.getNextSlot();
         NettyIOResult w = new NettyIOResult();
@@ -84,7 +84,7 @@ public class NettyEndpoint implements StorageEndpoint {
         return w;
     }
 
-    public StorageFuture read(CrailBuffer rBufferC, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
+    final public StorageFuture read(CrailBuffer rBufferC, BlockInfo remoteMr, long remoteOffset) throws IOException, InterruptedException{
         RdmaMsgTx tx = new RdmaMsgTx();
         long id = this.group.getNextSlot();
         NettyIOResult r = new NettyIOResult();
@@ -103,18 +103,18 @@ public class NettyEndpoint implements StorageEndpoint {
         return r;
     }
 
-    public void close() throws IOException, InterruptedException{
+    final public void close() throws IOException, InterruptedException{
         /* don't care about the sync */
         synchronized (this) {
             noAtomicClientChannel.close();
         }
     }
 
-    public boolean isLocal(){
+    final public boolean isLocal(){
         return false;
     }
 
-    public String toString(){
+    final public String toString(){
         return this.noAtomicClientChannel.toString();
     }
 }

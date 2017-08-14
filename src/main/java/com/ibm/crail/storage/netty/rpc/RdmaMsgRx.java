@@ -49,7 +49,7 @@ public class RdmaMsgRx extends RdmaMsgHeader {
         this.rxPayload.release();
     }
 
-    public String toString() {
+    final public String toString() {
         return super.toString() + " rxPayload: " + (this.rxPayload == null?" NULL ":" NotNULL ");
     }
 

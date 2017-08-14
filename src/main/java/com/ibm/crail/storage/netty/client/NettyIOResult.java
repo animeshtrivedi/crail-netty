@@ -49,7 +49,7 @@ public class NettyIOResult implements StorageFuture, StorageResult {
         cookie = -1;
     }
 
-    public String toString(){
+    final public String toString(){
         return " length: " + length +
                 " finished " + finished +
                 " dest " + dest +
@@ -98,24 +98,24 @@ public class NettyIOResult implements StorageFuture, StorageResult {
         }
     }
 
-    public int getLen() {
+    final public int getLen() {
         assert (isDone());
         return this.length;
     }
 
-    public boolean cancel(boolean mayInterruptIfRunning) {
+    final public boolean cancel(boolean mayInterruptIfRunning) {
         return false;
     }
 
-    public boolean isCancelled() {
+    final public boolean isCancelled() {
         return false;
     }
 
-    public boolean isDone() {
+    final public boolean isDone() {
         return finished;
     }
 
-    public StorageResult get() throws InterruptedException, ExecutionException {
+    final public StorageResult get() throws InterruptedException, ExecutionException {
         synchronized (this) {
             if (!finished) {
                 // then we have to block until finished is marked set
@@ -131,7 +131,7 @@ public class NettyIOResult implements StorageFuture, StorageResult {
         return this;
     }
 
-    public StorageResult get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    final public StorageResult get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         /* otherwise we wait */
         synchronized (this) {
             if (!finished) {
@@ -148,7 +148,7 @@ public class NettyIOResult implements StorageFuture, StorageResult {
         return this;
     }
 
-    public boolean isSynchronous() {
+    final public boolean isSynchronous() {
         return false;
     }
 }

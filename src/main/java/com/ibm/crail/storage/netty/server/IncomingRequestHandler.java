@@ -82,7 +82,7 @@ public class IncomingRequestHandler extends SimpleChannelInboundHandler<RdmaMsgR
         }
     }
 
-    protected void channelRead0(ChannelHandlerContext ctx, RdmaMsgRx rxMsg) throws Exception {
+    final protected void channelRead0(ChannelHandlerContext ctx, RdmaMsgRx rxMsg) throws Exception {
         ByteBuf buf = this.dataNode.stagToNettyBuffer(rxMsg.stag());
         if(buf == null) {
             /* then this was a wrong stag, send back reply */

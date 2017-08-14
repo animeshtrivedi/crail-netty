@@ -258,11 +258,11 @@ public class NettyResponse implements RpcNameNodeState {
         return type;
     }
 
-    public short getError() {
+    final public short getError() {
         return error;
     }
 
-    public void setError(short error) {
+    final public void setError(short error) {
         this.error = error;
     }
 

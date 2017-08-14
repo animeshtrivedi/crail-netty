@@ -38,7 +38,7 @@ public class ResponseDecoder extends ByteToMessageDecoder {
     }
 
     @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
+    final protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
         if(byteBuf.readableBytes() < NettyResponse.CSIZE) {
             return;
         }

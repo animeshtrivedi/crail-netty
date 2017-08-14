@@ -28,7 +28,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 public class RequestEncoder extends MessageToByteEncoder<NettyRequest> {
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, NettyRequest req,
+    final protected void encode(ChannelHandlerContext channelHandlerContext, NettyRequest req,
                           ByteBuf byteBuf) throws Exception {
         req.write(byteBuf);
     }

@@ -40,38 +40,38 @@ public class NettyResponseFuture<T> extends NettyCommonFuture implements RpcFutu
         this.done = false;
     }
 
-    public void markDone() {
+    final public void markDone() {
         synchronized (this) {
             this.done = true;
             this.notifyAll();
         }
     }
 
-    public int getTicket() {
+    final public int getTicket() {
         return this.hashCode();
     }
 
-    public boolean isPrefetched() {
+    final public boolean isPrefetched() {
         return this.prefetch;
     }
 
-    public void setPrefetched(boolean b) {
+    final public void setPrefetched(boolean b) {
         this.prefetch = b;
     }
 
-    public boolean cancel(boolean mayInterruptIfRunning) {
+    final public boolean cancel(boolean mayInterruptIfRunning) {
         return false;
     }
 
-    public boolean isCancelled() {
+    final public boolean isCancelled() {
         return false;
     }
 
-    public boolean isDone() {
+    final public boolean isDone() {
         return this.done;
     }
 
-    public T get() throws InterruptedException, ExecutionException {
+    final public T get() throws InterruptedException, ExecutionException {
         /* otherwise we wait */
         synchronized (this) {
             if (!isDone()) {
@@ -85,7 +85,7 @@ public class NettyResponseFuture<T> extends NettyCommonFuture implements RpcFutu
         return result;
     }
 
-    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    final public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         /* otherwise we wait */
         synchronized (this) {
             if (!isDone()) {

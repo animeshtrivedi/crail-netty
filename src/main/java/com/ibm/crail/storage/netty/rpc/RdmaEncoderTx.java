@@ -28,12 +28,12 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 public class RdmaEncoderTx extends MessageToByteEncoder<RdmaMsgTx> {
 
-    protected void encode(ChannelHandlerContext ctx, RdmaMsgTx txMsg, ByteBuf buf) {
+    final protected void encode(ChannelHandlerContext ctx, RdmaMsgTx txMsg, ByteBuf buf) {
         txMsg.encode(buf);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+    final public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
     }
