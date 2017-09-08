@@ -37,12 +37,12 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 
-public class NettyRPCNamenodeClient implements RpcConnection {
+public class NettyRPCNamenodeConnection implements RpcConnection {
     static private final Logger LOG = CrailNettyUtils.getLogger();
     private Channel clientChannel;
     private NettyRPCNamenodeClientGroup group;
 
-    public NettyRPCNamenodeClient(Channel clientChannel, NettyRPCNamenodeClientGroup grp){
+    public NettyRPCNamenodeConnection(Channel clientChannel, NettyRPCNamenodeClientGroup grp){
         this.clientChannel = clientChannel;
         this.group = grp;
     }

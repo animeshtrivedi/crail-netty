@@ -22,8 +22,8 @@
 
 package com.ibm.crail.storage.netty.server;
 
+import com.ibm.crail.conf.CrailConfiguration;
 import com.ibm.crail.storage.StorageResource;
-import com.ibm.crail.storage.StorageRpcClient;
 import com.ibm.crail.storage.StorageServer;
 import com.ibm.crail.storage.netty.CrailNettyUtils;
 import com.ibm.crail.storage.netty.NettyConstants;
@@ -181,10 +181,6 @@ public class NettyStorageServer implements Runnable, StorageServer {
         return true;
     }
 
-    public void join() throws Exception {
-
-    }
-
     /**
      * Look up and return an associated ByteBuffer for a given key
      *
@@ -194,6 +190,16 @@ public class NettyStorageServer implements Runnable, StorageServer {
      */
     public ByteBuf stagToNettyBuffer(int stag) {
         return map.getOrDefault(stag, null);
+    }
+
+    public void init(CrailConfiguration crailConfiguration, String[] strings) throws Exception {
+        NettyConstants.init(crailConfiguration);
+    }
+
+    public void printConf(Logger logger) {
+        logger.info(NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT_KEY + " " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT);
+        logger.info(NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE_KEY + " " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
+        logger.info(NettyConstants.STORAGENODE_NETTY_INTERFACE_KEY + " " + NettyConstants.STORAGENODE_NETTY_INTERFACE);
     }
 }
 

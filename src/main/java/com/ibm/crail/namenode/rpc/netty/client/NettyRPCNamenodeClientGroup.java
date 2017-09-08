@@ -49,9 +49,9 @@ public class NettyRPCNamenodeClientGroup {
     private ConcurrentHashMap<Long, NettyResponse> inFlightOps;
     private AtomicLong slot;
 
-    private ArrayList<NettyRPCNamenodeClient> activeClients;
+    private ArrayList<NettyRPCNamenodeConnection> activeClients;
 
-    public NettyRPCNamenodeClientGroup(){
+    NettyRPCNamenodeClientGroup(){
         workerGroup = new NioEventLoopGroup();
         boot = new Bootstrap();
         boot.group(workerGroup);
@@ -70,16 +70,16 @@ public class NettyRPCNamenodeClientGroup {
 
         slot = new AtomicLong(1);
         inFlightOps = new ConcurrentHashMap<Long, NettyResponse>();
-        activeClients = new ArrayList<NettyRPCNamenodeClient>();
+        activeClients = new ArrayList<NettyRPCNamenodeConnection>();
     }
 
-    public void closeClientGroup(){
+    void closeClientGroup(){
         /* check in flight */
         if(inFlightOps.size() != 0) {
             LOG.error("There are in flight requests");
             Thread.dumpStack();
         }
-        for (NettyRPCNamenodeClient c : activeClients) {
+        for (NettyRPCNamenodeConnection c : activeClients) {
             c.close();
         }
         activeClients.clear();
@@ -90,11 +90,11 @@ public class NettyRPCNamenodeClientGroup {
         }
     }
 
-    public long getNextSlot(){
+    long getNextSlot(){
         return slot.incrementAndGet();
     }
 
-    public void insertNewInflight(long slot, NettyResponse ops){
+    void insertNewInflight(long slot, NettyResponse ops){
         inFlightOps.put(slot, ops);
     }
 
@@ -102,7 +102,7 @@ public class NettyRPCNamenodeClientGroup {
         return inFlightOps.remove(slot);
     }
 
-    public NettyRPCNamenodeClient getClient(InetSocketAddress inetSocketAddress) {
+    NettyRPCNamenodeConnection getClient(InetSocketAddress inetSocketAddress) {
         Channel clientChannel = null;
         try {
             clientChannel = boot.connect(inetSocketAddress.getAddress(),
@@ -111,7 +111,7 @@ public class NettyRPCNamenodeClientGroup {
             e.printStackTrace();
         }
         LOG.info("Connected to the Netty Namenode at : " + inetSocketAddress);
-        NettyRPCNamenodeClient ep = new NettyRPCNamenodeClient(clientChannel, this);
+        NettyRPCNamenodeConnection ep = new NettyRPCNamenodeConnection(clientChannel, this);
         activeClients.add(ep);
         return ep;
     }
