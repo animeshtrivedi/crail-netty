@@ -41,7 +41,7 @@ public class NettyConstants {
     public static final String STORAGENODE_NETTY_PORT_KEY = "crail.storage.netty.port";
     public static int STORAGENODE_NETTY_PORT = 19862;
 
-    static public void init(CrailConfiguration conf) throws IOException {
+    static public void init(CrailConfiguration conf) throws Exception {
 
         if (conf.get(STORAGENODE_NETTY_STORAGE_LIMIT_KEY) != null) {
             STORAGENODE_NETTY_STORAGE_LIMIT = Long.parseLong(conf.get(STORAGENODE_NETTY_STORAGE_LIMIT_KEY));
@@ -52,12 +52,12 @@ public class NettyConstants {
         }
 
         if(STORAGENODE_NETTY_ALLOCATION_SIZE > STORAGENODE_NETTY_STORAGE_LIMIT) {
-            throw new IOException(" Allocation size: " + STORAGENODE_NETTY_ALLOCATION_SIZE +
+            throw new Exception(" Allocation size: " + STORAGENODE_NETTY_ALLOCATION_SIZE +
                     " is greater than the storage limit" + STORAGENODE_NETTY_STORAGE_LIMIT);
         }
 
         if(STORAGENODE_NETTY_STORAGE_LIMIT % STORAGENODE_NETTY_ALLOCATION_SIZE != 0 ) {
-            throw new IOException(" Storage size: " + STORAGENODE_NETTY_STORAGE_LIMIT +
+            throw new Exception(" Storage size: " + STORAGENODE_NETTY_STORAGE_LIMIT +
                     " is not a multiple of allocation size " + STORAGENODE_NETTY_ALLOCATION_SIZE);
         }
 

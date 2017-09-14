@@ -56,9 +56,17 @@ public class NettyStorageServer implements Runnable, StorageServer {
     private ConcurrentHashMap<Integer, ByteBuf> map;
     private int currentStag;
     private boolean isRunning;
-    long allocated;
+    private long allocated;
 
     public NettyStorageServer(){
+        //Don't do anything here as the init with the configuration is called later in the code
+    }
+
+    final public InetSocketAddress getAddress() {
+        return this.inetSocketAddress;
+    }
+
+    private void initServer() throws Exception {
         this.inetSocketAddress = getNettyDataNodeAddress();
         this.map = null;
         /* we start with 1 stag, and then every time we allocate a new block we increment it by 1 */
@@ -72,11 +80,7 @@ public class NettyStorageServer implements Runnable, StorageServer {
                 " gives #entries " + entries);
     }
 
-    final public InetSocketAddress getAddress() {
-        return this.inetSocketAddress;
-    }
-
-    private InetSocketAddress getNettyDataNodeAddress() {
+    private InetSocketAddress getNettyDataNodeAddress() throws Exception {
         if(null == NettyConstants.STORAGENODE_NETTY_INTERFACE) {
                 /* we need to init it */
             NetworkInterface netif = null;
@@ -86,8 +90,7 @@ public class NettyStorageServer implements Runnable, StorageServer {
                 e.printStackTrace();
             }
             if(netif == null ) {
-                LOG.error("Expected interface " + NettyConstants._ifname + " not found. Please check you crail config file");
-                return null;
+                throw new Exception("Expected interface " + NettyConstants._ifname + " not found. Please check you crail config file");
             }
             List<InterfaceAddress> addresses = netif.getInterfaceAddresses();
             InetAddress addr = null;
@@ -194,12 +197,13 @@ public class NettyStorageServer implements Runnable, StorageServer {
 
     public void init(CrailConfiguration crailConfiguration, String[] strings) throws Exception {
         NettyConstants.init(crailConfiguration);
+        initServer();
     }
 
     public void printConf(Logger logger) {
-        logger.info(NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT_KEY + " " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT);
-        logger.info(NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE_KEY + " " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
-        logger.info(NettyConstants.STORAGENODE_NETTY_INTERFACE_KEY + " " + NettyConstants.STORAGENODE_NETTY_INTERFACE);
+        logger.info(" NETTY: " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT_KEY + " : " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT);
+        logger.info(" NETTY: " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE_KEY + " : " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
+        logger.info(" NETTY: " + NettyConstants.STORAGENODE_NETTY_INTERFACE_KEY + " : " + NettyConstants.STORAGENODE_NETTY_INTERFACE);
     }
 }
 
