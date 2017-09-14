@@ -9,6 +9,11 @@ This interface is implemented by `com.ibm.crail.namenode.rpc.netty.NettyNameNode
 which happens between a storage node and a client, is defined in `com.ibm.crail.storage` package and implemented by 
 `com.ibm.crail.storage.netty.NettyStorageTier`.
 
+**News:**
+
+ - September 14th, 2017: Parameter `crail.storage.netty.interface`, which took the interface name, is now replaced 
+ with `crail.datanode.netty.address` that takes the IP address.
+ 
 ## Building 
 
 Apart from the dependencies of Crail (https://github.com/zrlio/crail#requirements), crail-netty depends upon netty. 
