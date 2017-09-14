@@ -12,7 +12,8 @@ which happens between a storage node and a client, is defined in `com.ibm.crail.
 **News:**
 
  - September 14th, 2017: Parameter `crail.storage.netty.interface`, which took the interface name, is now replaced 
- with `crail.datanode.netty.address` that takes the IP address.
+ with `crail.datanode.netty.address` that takes the IP address. And command line parsing is enabled. The parameter 
+ supplied at the command line take precedence over the config values set in the `crail-site.conf` file. 
  
 ## Building 
 
@@ -27,6 +28,12 @@ netty jar (`./target/crail-netty-1.0-dist/jars/netty-all-4.0.29.Final.jar`), if 
 Alternatively you can also put these files in your custom classpath (if you have one) and export it.
 
 ## Configuration parameters
+  * Storage Limit: This is the maximum amount of memory that crail netty will offer to save data (default: 1 GB). 
+  * Allocation size: This is the chunks in which the maximum amount of memory (storage limit) will be allocate (default: 1 GB).
+  * Address: The IP address or the hostname where the server should bind and run (default: hostname).
+  * Port: The port where the data node should bind and run (default: 19862).
+  
+### Setting via `crail-site.conf` 
 The current code accepts following parameters (shown here with their default values):
 
 ```bash
@@ -38,13 +45,24 @@ crail.storage.netty.port            19862
 
 You should put them in the `$CRAIL_HOME/conf/crail-site.conf` file.
 
-**Note:** Currently these values cannot be overidden by a command line parameter. We will support this feature with 
-the next release.
+### Passing from the command line 
+The above defined parameters can also be set via the command line with the following parameters 
+```bash
+  -a,--address <arg>          (string) IP address or the hostname, where to run the server  
+  -l,--storageLimit <arg>     (long) storage limit
+  -p,--port <arg>             (int) port number of the netty data server
+  -s,--allocationSize <arg>   (long) allocation size
+```
+The values specified at the command prompt take precedence over the values defined in the `crail-site.conf` file. 
+An example run of the netty data node would be 
+```bash
+$./bin/crail datanode -t com.ibm.crail.storage.netty.NettyStorageTier -- -a 10.10.10.11 -p 8881 -l $((1073741824 * 4))
+```
 
 ## Enabling data transfer on Netty
 Instructions to start a crail storage node is mostly similar to crail (https://github.com/zrlio/crail#deploying). 
 Crail-netty implements a specific type of Crail storage node which does data transfers to a client over netty. To 
-run this crail-netty stroage node: 
+run this crail-netty strogae node: 
 ```bash 
 $CRAIL_HOME/bin/crail datanode -t com.ibm.crail.storage.netty.NettyStorageTier
 ```
@@ -70,11 +88,12 @@ crail.namenode.rpc.type  com.ibm.crail.namenode.rpc.NettyNameNode
 To enable deployment via `$CRAIL_HOME/bin/start-crail.sh`, you should use `-t` flag to define netty storage node in the 
 the crail slave file (`$CRAIL_HOME/conf/slave`). An example slave file might look something like this: 
 ```bash
-hostname1 -t com.ibm.crail.storage.netty.NettyStorageTier
-hostname2 -t com.ibm.crail.storage.netty.NettyStorageTier
-hostname3 -t com.ibm.crail.storage.netty.NettyStorageTier
+hostname1 -t com.ibm.crail.storage.netty.NettyStorageTier -a hostname1 [...] 
+hostname2 -t com.ibm.crail.storage.netty.NettyStorageTier -a hostname2  [...]
+hostname3 -t com.ibm.crail.storage.netty.NettyStorageTier -a hostname3  [...]
 ...
 ```
+[...] represents other paramters that can be specificed on the shell (`-a,` `-p`, `-s`, `-l`). 
 
 ## An example of netty-only Crail deployment on localhost 
 Here is the content of `core-site.xml` and `crail-site.conf` when you just want to configure crail to run on localhost

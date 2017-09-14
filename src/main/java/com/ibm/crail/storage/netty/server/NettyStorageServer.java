@@ -40,8 +40,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import sun.nio.ch.DirectBuffer;
 
-import java.net.*;
-import java.util.List;
+import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static io.netty.buffer.Unpooled.directBuffer;
@@ -67,28 +66,21 @@ public class NettyStorageServer implements Runnable, StorageServer {
     }
 
     private void initServer() throws Exception {
-        this.inetSocketAddress = getNettyDataNodeAddress();
+        NettyConstants conf = NettyConstants.get();
+        this.inetSocketAddress = conf.getNettyDataNodeAddress();
+        assert this.inetSocketAddress != null;
         this.map = null;
         /* we start with 1 stag, and then every time we allocate a new block we increment it by 1 */
         this.currentStag = 1;
         this.isRunning = false;
         this.allocated = 0;
-        int entries = (int) (NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT /NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
+        int entries = (int) (conf.getStorageLimit() / conf.getAllocationSize());
         this.map = new ConcurrentHashMap<Integer, ByteBuf>(entries);
-        LOG.info(" constructor, alloc size " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE +
-                " limit " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT +
+        LOG.info(" constructor, alloc size " + conf.getAllocationSize() +
+                " limit " + conf.getStorageLimit() +
                 " gives #entries " + entries);
     }
 
-    private InetSocketAddress getNettyDataNodeAddress() throws Exception {
-        if(null == NettyConstants.STORAGENODE_NETTY_ADDRESS) {
-            InetAddress addr = InetAddress.getByName(NettyConstants._ipaddress);
-            NettyConstants.STORAGENODE_NETTY_ADDRESS = new InetSocketAddress(addr,
-                    NettyConstants.STORAGENODE_NETTY_PORT);
-        }
-        /* once you have it always return it */
-        return NettyConstants.STORAGENODE_NETTY_ADDRESS;
-    }
 
     final public void run() {
         /* start the netty server */
@@ -137,28 +129,29 @@ public class NettyStorageServer implements Runnable, StorageServer {
     final public StorageResource allocateResource() throws Exception {
         double perc;
         StorageResource res = null;
+        NettyConstants conf = NettyConstants.get();
         /* Have we already allocated all? then return null */
-        if(allocated < NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT) {
+        if(allocated < conf.getStorageLimit()) {
             /* allocate a new buffer */
-            ByteBuf buf = directBuffer((int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE,
-                    (int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
+            ByteBuf buf = directBuffer((int) conf.getAllocationSize(),
+                    (int) conf.getAllocationSize());
             /* retain this buffer */
             buf.retain();
             Long address = ((DirectBuffer) buf.nioBuffer()).address();
             /* update entries */
             map.put(this.currentStag, buf);
             res = StorageResource.createResource(address,
-                    (int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE,
+                    (int) conf.getAllocationSize(),
                     this.currentStag);
             LOG.info("MAP entry : " + Long.toHexString(address) +
-                    " length : " + (int) NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE +
+                    " length : " + (int) conf.getAllocationSize()+
                     " stag : " + this.currentStag + " refCount: " + buf.refCnt());
             /* update counters */
-            allocated += NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE;
-            perc=allocated * 100 / NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT;
+            allocated += conf.getAllocationSize();
+            perc=allocated * 100 / conf.getStorageLimit();
             this.currentStag++;
             LOG.info("Allocation done : " + perc + "% , allocated " + allocated +
-                    " / " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT);
+                    " / " + conf.getStorageLimit());
         }
         return res;
     }
@@ -180,14 +173,12 @@ public class NettyStorageServer implements Runnable, StorageServer {
     }
 
     public void init(CrailConfiguration crailConfiguration, String[] strings) throws Exception {
-        NettyConstants.init(crailConfiguration);
+        NettyConstants.get().init(crailConfiguration, strings);
         initServer();
     }
 
     public void printConf(Logger logger) {
-        logger.info(" NETTY: " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT_KEY + " : " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT);
-        logger.info(" NETTY: " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE_KEY + " : " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
-        logger.info(" NETTY: " + NettyConstants.STORAGENODE_NETTY_ADDRESS_KEY + " : " + NettyConstants.STORAGENODE_NETTY_ADDRESS);
+        logger.info("\n"+ NettyConstants.get().printConf());
     }
 }
 
