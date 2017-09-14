@@ -27,7 +27,7 @@ The current code accepts following parameters (shown here with their default val
 ```bash
 crail.storage.netty.storagelimit    1073741824
 crail.storage.netty.allocationsize  1073741824
-crail.storage.netty.interface       lo 
+crail.storage.netty.address         127.0.0.1 
 crail.storage.netty.port            19862
 ```
 
@@ -116,7 +116,7 @@ crail.namenode.rpc.type        com.ibm.crail.namenode.rpc.netty.NettyNameNode
 crail.storage.types com.ibm.crail.storage.netty.NettyStorageTier
 crail.storage.netty.storagelimit       1073741824
 crail.storage.netty.allocationsize     1073741824
-crail.storage.netty.interface          lo
+crail.storage.netty.address            127.0.0.1
 crail.storage.netty.port               19862
 ```
 ## A word on performance 
