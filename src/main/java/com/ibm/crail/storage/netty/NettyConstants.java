@@ -24,8 +24,11 @@ package com.ibm.crail.storage.netty;
 
 import com.ibm.crail.conf.CrailConfiguration;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class NettyConstants {
     public static final String STORAGENODE_NETTY_STORAGE_LIMIT_KEY = "crail.storage.netty.storagelimit";
@@ -34,15 +37,44 @@ public class NettyConstants {
     public static final String STORAGENODE_NETTY_ALLOCATION_SIZE_KEY = "crail.storage.netty.allocationsize";
     public static long STORAGENODE_NETTY_ALLOCATION_SIZE = 1073741824;
 
-    public static final String STORAGENODE_NETTY_INTERFACE_KEY = "crail.storage.netty.interface";
-    public static InetSocketAddress STORAGENODE_NETTY_INTERFACE = null;
-    public static String _ifname = "lo";
+    static final HashMap<String, String> faultyMap = new LinkedHashMap<String, String>();
+
+    public static final String STORAGENODE_NETTY_ADDRESS_KEY = "crail.storage.netty.address";
+    public static InetSocketAddress STORAGENODE_NETTY_ADDRESS = null;
+    public static String _ipaddress = "127.0.0.1";
 
     public static final String STORAGENODE_NETTY_PORT_KEY = "crail.storage.netty.port";
     public static int STORAGENODE_NETTY_PORT = 19862;
 
-    static public void init(CrailConfiguration conf) throws Exception {
+    static private void checkDeprecatedProperties(final CrailConfiguration conf) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        int sum = 0;
+        for (Object o : faultyMap.entrySet()) {
+            Map.Entry pair = (Map.Entry) o;
+            String key = (String) pair.getKey();
+            String value = (String) pair.getValue();
+            if(conf.get(key) != null){
+                /* an old property is set */
+                sb.append("\n \"" + key + "\" is deprecated and removed. Please use \"" + value + "\" to set the property\n");
+                sum++;
+            }
+        }
+        if(sum != 0){
+            /* we had some old values set */
+            throw new Exception(sb.toString());
+        }
+    }
 
+    static public void init(CrailConfiguration conf) throws Exception {
+        /* check for old values and error the user */
+        faultyMap.put("crail.storage.netty.interface", STORAGENODE_NETTY_ADDRESS_KEY);
+        faultyMap.put("crail.datanode.netty.storagelimit", STORAGENODE_NETTY_STORAGE_LIMIT_KEY);
+        faultyMap.put("crail.datanode.netty.allocationsize", STORAGENODE_NETTY_ALLOCATION_SIZE_KEY);
+        faultyMap.put("crail.datanode.netty.interface", STORAGENODE_NETTY_ADDRESS_KEY);
+        faultyMap.put("crail.datanode.netty.port", STORAGENODE_NETTY_PORT_KEY);
+        checkDeprecatedProperties(conf);
+
+        /* now we set the new values */
         if (conf.get(STORAGENODE_NETTY_STORAGE_LIMIT_KEY) != null) {
             STORAGENODE_NETTY_STORAGE_LIMIT = Long.parseLong(conf.get(STORAGENODE_NETTY_STORAGE_LIMIT_KEY));
         }
@@ -62,8 +94,8 @@ public class NettyConstants {
         }
 
         /* now setup the interface */
-        if (conf.get(STORAGENODE_NETTY_INTERFACE_KEY) != null) {
-            _ifname = conf.get(STORAGENODE_NETTY_INTERFACE_KEY);
+        if (conf.get(STORAGENODE_NETTY_ADDRESS_KEY) != null) {
+            _ipaddress = conf.get(STORAGENODE_NETTY_ADDRESS_KEY);
         }
         if(conf.get(STORAGENODE_NETTY_PORT_KEY) != null) {
             STORAGENODE_NETTY_PORT = Integer.parseInt(conf.get(STORAGENODE_NETTY_PORT_KEY));

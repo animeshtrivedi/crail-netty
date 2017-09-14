@@ -81,29 +81,13 @@ public class NettyStorageServer implements Runnable, StorageServer {
     }
 
     private InetSocketAddress getNettyDataNodeAddress() throws Exception {
-        if(null == NettyConstants.STORAGENODE_NETTY_INTERFACE) {
-                /* we need to init it */
-            NetworkInterface netif = null;
-            try {
-                netif = NetworkInterface.getByName(NettyConstants._ifname);
-            } catch (SocketException e) {
-                e.printStackTrace();
-            }
-            if(netif == null ) {
-                throw new Exception("Expected interface " + NettyConstants._ifname + " not found. Please check you crail config file");
-            }
-            List<InterfaceAddress> addresses = netif.getInterfaceAddresses();
-            InetAddress addr = null;
-            for (InterfaceAddress address: addresses){
-                if (address.getBroadcast() != null){
-                    addr = address.getAddress();
-                }
-            }
-            NettyConstants.STORAGENODE_NETTY_INTERFACE = new InetSocketAddress(addr,
+        if(null == NettyConstants.STORAGENODE_NETTY_ADDRESS) {
+            InetAddress addr = InetAddress.getByName(NettyConstants._ipaddress);
+            NettyConstants.STORAGENODE_NETTY_ADDRESS = new InetSocketAddress(addr,
                     NettyConstants.STORAGENODE_NETTY_PORT);
         }
         /* once you have it always return it */
-        return NettyConstants.STORAGENODE_NETTY_INTERFACE;
+        return NettyConstants.STORAGENODE_NETTY_ADDRESS;
     }
 
     final public void run() {
@@ -203,7 +187,7 @@ public class NettyStorageServer implements Runnable, StorageServer {
     public void printConf(Logger logger) {
         logger.info(" NETTY: " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT_KEY + " : " + NettyConstants.STORAGENODE_NETTY_STORAGE_LIMIT);
         logger.info(" NETTY: " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE_KEY + " : " + NettyConstants.STORAGENODE_NETTY_ALLOCATION_SIZE);
-        logger.info(" NETTY: " + NettyConstants.STORAGENODE_NETTY_INTERFACE_KEY + " : " + NettyConstants.STORAGENODE_NETTY_INTERFACE);
+        logger.info(" NETTY: " + NettyConstants.STORAGENODE_NETTY_ADDRESS_KEY + " : " + NettyConstants.STORAGENODE_NETTY_ADDRESS);
     }
 }
 
