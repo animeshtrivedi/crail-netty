@@ -77,10 +77,10 @@ crail.storage.types  com.ibm.crail.storage.rdma.RdmaStorageTier,com.ibm.crail.st
 ## Enabling Netty RPCs
 
 By default Crail uses DaRPC (https://github.com/zrlio/darpc) for high-performance RPC calls over RDMA-enabled networks. 
-To switch RPCs from RDMA to netty, change the `crail.namenode.rpc.type` in the crail config file 
+To switch RPCs from RDMA to netty, change the `crail.namenode.rpctype` in the crail config file 
 (`$CRAIL_HOME/conf/crail-site.conf`): 
 ```bash
-crail.namenode.rpc.type  com.ibm.crail.namenode.rpc.NettyNameNode
+crail.namenode.rpctype  com.ibm.crail.namenode.rpc.NettyNameNode
 ```
 
 ## Setting up automatic deployment
@@ -135,7 +135,7 @@ crail.statistics  true
 
 crail.namenode.address         crail://localhost:9060
 crail.namenode.blockselection  roundrobin
-crail.namenode.rpc.type        com.ibm.crail.namenode.rpc.netty.NettyNameNode
+crail.namenode.rpctype        com.ibm.crail.namenode.rpc.netty.NettyNameNode
 
 crail.storage.types com.ibm.crail.storage.netty.NettyStorageTier
 crail.storage.netty.storagelimit       1073741824
