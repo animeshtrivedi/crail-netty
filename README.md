@@ -88,12 +88,12 @@ crail.namenode.rpctype  com.ibm.crail.namenode.rpc.NettyNameNode
 To enable deployment via `$CRAIL_HOME/bin/start-crail.sh`, you should use `-t` flag to define netty storage node in the 
 the crail slave file (`$CRAIL_HOME/conf/slave`). An example slave file might look something like this: 
 ```bash
-hostname1 -t com.ibm.crail.storage.netty.NettyStorageTier -a hostname1 [...] 
-hostname2 -t com.ibm.crail.storage.netty.NettyStorageTier -a hostname2  [...]
-hostname3 -t com.ibm.crail.storage.netty.NettyStorageTier -a hostname3  [...]
+hostname1 -t com.ibm.crail.storage.netty.NettyStorageTier -- -a hostname1 [...] 
+hostname2 -t com.ibm.crail.storage.netty.NettyStorageTier -- -a hostname2  [...]
+hostname3 -t com.ibm.crail.storage.netty.NettyStorageTier -- -a hostname3  [...]
 ...
 ```
-[...] represents other paramters that can be specificed on the shell (`-a,` `-p`, `-s`, `-l`). 
+[...] represents other paramters that can be specificed on the shell (`-a,` `-p`, `-s`, `-l`). IMPORTANT: notice the separation of the arguments with `--` in the slave files. 
 
 ## An example of netty-only Crail deployment on localhost 
 Here is the content of `core-site.xml` and `crail-site.conf` when you just want to configure crail to run on localhost
